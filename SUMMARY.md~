@@ -1,0 +1,22 @@
+# Summary
+This document provides documentation of 'Molecular Epidemiology of Viruses in R'.
+
+* [Introduction](intro/README.md)
+    * [example 1](intro/example1.md)
+    * [example 2](intro/example2.md)
+* [Retrieving sequences](getseq/README.md)
+    * [example 1](getseq/example1.md)
+* [Sequence alignment](align/README.md)
+    * [example 1](align/example1.md)
+* [Distance-based analyses](distance/README.md)
+    * [example 1](distance/example1.md)
+* [Maximum likelihood based analyses](ml/README.md)
+    * [example 1](ml/example1.md)
+* [Time-stamped phylogenies](timetree/README.md)
+    * [example 1](timetree/example1.md)
+* [Effective population size estimation](ne/README.md)
+    * [example 1](ne/example1.md)
+* [Structured populations](structure/README.md)
+    * [example 1](structure/example1.md)
+* [Discussion](discuss/README.md)
+    * [example 1](discuss/example1.md)

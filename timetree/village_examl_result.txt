@@ -1,0 +1,25 @@
+LEAST-SQUARE METHODS TO ESTIMATE RATES AND DATES - 0.1 
+
+
+Input files:
+  I                                 Input tree file : village_examl.tre
+  D                                 Input date file : village_examl.td
+Output file:
+  O                                    Output file  : village_examl_result.txt
+Parameters:
+  S                                 Sequence Length : 6987
+  C                                With constraints : Yes
+  T                        Lower bound for the rate : 0.000010
+  V                                  With variances : Yes
+  B                          Parameter of variances : 10.000000
+  R                               Estimate the root : Yes
+  W                         Given substitution rate : No
+  G                                Remove outgroups : No
+  N                               Multiple data set : No
+
+  H to print Help 
+  Y to accept or type a letter to change an option (Q = Exit) 
+Tree 1 rate 0.002496 tMRCA -0.379016 objective_function 0.389403
+
+*********************************************************
+Elapsed time: 6.88 seconds
