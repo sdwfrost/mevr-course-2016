@@ -40,7 +40,7 @@
     
 
         
-    <div class="book" data-level="7.2.1" data-basepath=".." data-revision="Fri May 22 2015 08:14:51 GMT+0100 (BST)">
+    <div class="book" data-level="7.2.1" data-basepath=".." data-revision="Fri May 22 2015 12:04:02 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1027,7 +1027,7 @@
 </code></pre><pre><code class="lang-r">seq.fn &lt;- <span class="hljs-string">&quot;H5N1.fas&quot;</span>
 </code></pre>
 <pre><code class="lang-r">stub &lt;- strsplit(seq.fn,<span class="hljs-string">&quot;.&quot;</span>,fixed=<span class="hljs-literal">TRUE</span>)[<span class="hljs-number">1</span>]
-myseqs &lt;- read.dna(seq.fn,format=<span class="hljs-string">&quot;fasta&quot;</span>,as.matrix=<span class="hljs-literal">FALSE</span>)
+myseqs &lt;- read.dna(seq.fn,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">FALSE</span>)
 </code></pre>
 <p>ML tree.</p>
 <pre><code class="lang-r">njtree  &lt;- nj(dist.dna(myseqs,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See ![this Wikipedia entry](http://en.wikipedia.org/wiki/Models_of_DNA_evolution) for details of this and other models of DNA evolution.">TN93</a>&quot;</span>))

@@ -40,7 +40,7 @@
     
 
         
-    <div class="book" data-level="2.2.1" data-basepath=".." data-revision="Fri May 22 2015 08:14:51 GMT+0100 (BST)">
+    <div class="book" data-level="2.2.1" data-basepath=".." data-revision="Fri May 22 2015 12:04:02 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1073,7 +1073,7 @@ search_fields
 )
 myids &lt;- accToIds(myaccs)
 mypost &lt;- entrez_post(db=<span class="hljs-string">&quot;nuccore&quot;</span>,id=myids)
-myseqs &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;fasta&quot;</span>, WebEnv=mypost$WebEnv, query_key=mypost$QueryKey)
+myseqs &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>, WebEnv=mypost$WebEnv, query_key=mypost$QueryKey)
 cat(myseqs,file=<span class="hljs-string">&quot;query.fas&quot;</span>)
 </code></pre>
 <h2 id="advanced">Advanced</h2>
@@ -1089,7 +1089,7 @@ ray2000
 </code></pre>
 <pre><code class="lang-r">ray2000.ids &lt;- ray2000.link$pubmed_nuccore
 ray2000.post &lt;- entrez_post(db=<span class="hljs-string">&quot;nuccore&quot;</span>,id=ray2000.ids)
-ray2000.seqs &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;fasta&quot;</span>, WebEnv=ray2000.post$WebEnv, query_key=ray2000.post$QueryKey)
+ray2000.seqs &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>, WebEnv=ray2000.post$WebEnv, query_key=ray2000.post$QueryKey)
 ray2000.xml &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;xml&quot;</span>, WebEnv=ray2000.post$WebEnv, query_key=ray2000.post$QueryKey)
 </code></pre>
 <pre><code class="lang-r">write(ray2000.seqs,<span class="hljs-string">&quot;ray2000.fas&quot;</span>)
@@ -1144,7 +1144,7 @@ length(seq.ids)
 <pre><code class="lang-r">seqs.post &lt;- entrez_post(db=<span class="hljs-string">&quot;nuccore&quot;</span>,id=seq.ids[<span class="hljs-number">1</span>:<span class="hljs-number">100</span>])
 </code></pre>
 <p>Next, we use <code>entrez_fetch</code> to fetch the sequences.</p>
-<pre><code class="lang-r">seqs.fasta &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;fasta&quot;</span>, WebEnv=seqs.post$WebEnv, query_key=seqs.post$QueryKey, retend=<span class="hljs-number">100</span>)
+<pre><code class="lang-r">seqs.fasta &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>, WebEnv=seqs.post$WebEnv, query_key=seqs.post$QueryKey, retend=<span class="hljs-number">100</span>)
 </code></pre>
 <pre><code class="lang-r">write(seqs.fasta,<span class="hljs-string">&quot;hcv_genomes.fas&quot;</span>)
 </code></pre>
