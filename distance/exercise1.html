@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="4.2.1" data-basepath=".." data-revision="Fri May 22 2015 12:24:44 GMT+0100 (BST)">
+    <div class="book" data-level="4.2.1" data-basepath=".." data-revision="Fri May 22 2015 12:26:45 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1022,8 +1022,8 @@
 <pre><code class="lang-r">myalignment.filename &lt;- <span class="hljs-string">&quot;ray2000_pruned_degapped.fas&quot;</span>
 myalignment &lt;- read.dna(myalignment.filename,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
 </code></pre>
-<p>Calculate distances using the <a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See [this Wikipedia entry](http://en.wikipedia.org/wiki/Models_of_DNA_evolution) for details of this and other models of DNA evolution.">TN93</a> model.</p>
-<pre><code class="lang-r">myalignment.dist.tn93 &lt;- dist.dna(myalignment,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See [this Wikipedia entry](http://en.wikipedia.org/wiki/Models_of_DNA_evolution) for details of this and other models of DNA evolution.">TN93</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
+<p>Calculate distances using the <a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a> model.</p>
+<pre><code class="lang-r">myalignment.dist.tn93 &lt;- dist.dna(myalignment,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
 </code></pre>
 <p>Plot out the distances.</p>
 <pre><code class="lang-r">hist(myalignment.dist.tn93[lower.tri(myalignment.dist.tn93)],xlab=<span class="hljs-string">&quot;Distance&quot;</span>,ylab=<span class="hljs-string">&quot;Frequency&quot;</span>,main=<span class="hljs-string">&quot;&quot;</span>,col=<span class="hljs-string">&quot;grey&quot;</span>)
@@ -1038,7 +1038,7 @@ add.scale.bar(length=<span class="hljs-number">0.1</span>)
 </code></pre>
 <p><figure><img src="figure/plot_tree-1.png" alt="plot of chunk plot_tree"><figcaption>Figure: plot of chunk plot_tree</figcaption></figure> </p>
 <p>Bootstrap the alignment; we first define a function to make a tree from the alignment, then call <code>boot.phylo</code>.</p>
-<pre><code class="lang-r">maketree &lt;- <span class="hljs-keyword">function</span>(x) nj(dist.dna(x,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See [this Wikipedia entry](http://en.wikipedia.org/wiki/Models_of_DNA_evolution) for details of this and other models of DNA evolution.">TN93</a>&quot;</span>))
+<pre><code class="lang-r">maketree &lt;- <span class="hljs-keyword">function</span>(x) nj(dist.dna(x,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a>&quot;</span>))
 myalignment.tn93.nj.boot &lt;- boot.phylo(myalignment.tn93.nj,myalignment,maketree,B=<span class="hljs-number">100</span>,block=<span class="hljs-number">3</span>,trees=<span class="hljs-literal">TRUE</span>,quiet=<span class="hljs-literal">FALSE</span>,rooted=<span class="hljs-literal">FALSE</span>)
 </code></pre>
 <pre><code>## 
