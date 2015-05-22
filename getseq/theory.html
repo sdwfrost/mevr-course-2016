@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="2.1" data-basepath=".." data-revision="Fri May 22 2015 13:52:41 GMT+0100 (BST)">
+    <div class="book" data-level="2.1" data-basepath=".." data-revision="Fri May 22 2015 14:34:10 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1019,6 +1019,68 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="theory">Theory</h1>
+<ul>
+<li>The first thing you will need in an analysis are some data!</li>
+<li>These may come from a variety of sources, and in a variety of formats</li>
+</ul>
+<h2 id="public-databases">Public databases</h2>
+<ul>
+<li>General databases, part of the International Nucleotide Sequence Database Collaboration<ul>
+<li><a href="http://www.ncbi.nlm.nih.gov/genbank/" target="_blank">GenBank</a></li>
+<li><a href="http://www.ebi.ac.uk/ena" target="_blank">European Nucleotide Archive (ENA)</a></li>
+<li><a href="http://www.ddbj.nig.ac.jp/" target="_blank">DNA Databank of Japan (DDBJ)</a></li>
+</ul>
+</li>
+<li>Virus specific databases, e.g.<ul>
+<li><a href="http://www.ncbi.nlm.nih.gov/genomes/FLU/FLU.html" target="_blank">NCBI Influenza Virus Resource</a></li>
+<li><a href="http://hiv-web.lanl.gov" target="_blank">Los Alamos HIV Sequence Database</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="genbank">Genbank</h2>
+<ul>
+<li>We will download sequences and associated data from GenBank</li>
+<li>Central to this goal is the way in which sequences are identified</li>
+<li><a href="../GLOSSARY.html#gi" class="glossary-term" title="A GI (genInfo) number is a sequence identifier used by GenBank. More information can be found &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/Sitemap/sequenceIDs.html&quot;&gt;here&lt;/a&gt;.">GI</a> numbers are simply a series of digits that are assigned consecutively</li>
+<li>Accession numbers in the nucleotide database comprise of 1-2 letters, 5-6 digits, a dot and a version number</li>
+<li>In the reference sequence database, accession numbers comprise of 2 letters, an underscore, and several digits</li>
+</ul>
+<h2 id="annotations">Annotations</h2>
+<ul>
+<li>At a minimum, GenBank expects the following for each viral sequence submitted<ul>
+<li>Organism name</li>
+<li>Isolate</li>
+<li>Country (optional)</li>
+<li>Collection date (optional)</li>
+<li>Host (optional)</li>
+</ul>
+</li>
+<li>For influenza virus, rotavirus, and norovirus, the above optional fields are mandatory</li>
+</ul>
+<h2 id="entrez-through-the-web">Entrez through the web</h2>
+<ul>
+<li>Multiple databases at NCBI can be searched via the search engine Entrez</li>
+<li>For exploratory searches, it is useful to access Entrez directly through a web browser at <a href="http://www.ncbi.nlm.nih.gov/Entrez" target="_blank">http://www.ncbi.nlm.nih.gov/Entrez</a></li>
+</ul>
+<h2 id="output-formats">Output formats</h2>
+<ul>
+<li>There are a number of different formats for output once sequences have been identified; we will consider three:<ul>
+<li><a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">FASTA</a></li>
+<li>List of <a href="../GLOSSARY.html#gi" class="glossary-term" title="A GI (genInfo) number is a sequence identifier used by GenBank. More information can be found &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/Sitemap/sequenceIDs.html&quot;&gt;here&lt;/a&gt;.">GI</a> numbers</li>
+<li>INSDSeq XML</li>
+</ul>
+</li>
+</ul>
+<h2 id="entrez-through-r">Entrez through R</h2>
+<ul>
+<li>Eutils can also be used to access Entrez</li>
+<li>This has the advantages of being able to reproduce the searches, as well as update them, as new data become available</li>
+</ul>
+<h2 id="extracting-annotation-data">Extracting annotation data</h2>
+<ul>
+<li>Information like host and collection data is not provided in the <a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">FASTA</a> file; it has to be extracted from the full record</li>
+<li>In the practical, we will see how this information can be extracted from the record in INSDSeq XML format</li>
+</ul>
 
                     
                     </section>
