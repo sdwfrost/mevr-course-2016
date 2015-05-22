@@ -22,4 +22,4 @@ Parameters:
 Tree 1 rate 0.002496 tMRCA -0.379016 objective_function 0.389403
 
 *********************************************************
-Elapsed time: 6.88 seconds
+Elapsed time: 7.31 seconds

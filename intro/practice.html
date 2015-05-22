@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="1.1" data-basepath=".." data-revision="Fri May 22 2015 13:32:44 GMT+0100 (BST)">
+    <div class="book" data-level="1.1" data-basepath=".." data-revision="Fri May 22 2015 13:43:17 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1051,7 +1051,7 @@ GCCATGTACGTGGGGGATCTCTGCGGATCTGTTTTCCTCGTCTCCCAAC
 TATCAGACGGTACAGGACTGCAATTGTTCAATCTATCCTGGCCACGTAA
 </code></pre><h2 id="reading-in-sequence-data">Reading in sequence data</h2>
 <ul>
-<li>A dataset we will use throughout is of partial hepatitis C sequences of the Core/E1 region, sampled from Egypt</li>
+<li>A dataset we will use throughout is of partial hepatitis C sequences of the Core/E1 region, sampled from Egypt (Ray, Arthur, Carella, Bukh, and Thomas, 2000).</li>
 </ul>
 <pre><code class="lang-r">myseqs &lt;- read.dna(<span class="hljs-string">&quot;ray2000.fas&quot;</span>,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
 </code></pre>
@@ -1079,11 +1079,11 @@ TATCAGACGGTACAGGACTGCAATTGTTCAATCTATCCTGGCCACGTAA
 </code></pre><h2 id="displaying-the-alignment">Displaying the alignment</h2>
 <pre><code class="lang-r">image(myseqs)
 </code></pre>
-<p><figure><img src="figure/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5"><figcaption>Figure: plot of chunk unnamed-chunk-5</figcaption></figure> </p>
+<p><figure><img src="figure/display_alignment-1.png" alt="plot of chunk display_alignment"><figcaption>Figure: plot of chunk display_alignment</figcaption></figure> </p>
 <h2 id="displaying-part-of-an-alignment">Displaying part of an alignment</h2>
 <pre><code class="lang-r">image(myseqs[<span class="hljs-number">1</span>:<span class="hljs-number">10</span>,<span class="hljs-number">100</span>:<span class="hljs-number">200</span>])
 </code></pre>
-<p><figure><img src="figure/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6"><figcaption>Figure: plot of chunk unnamed-chunk-6</figcaption></figure> </p>
+<p><figure><img src="figure/display_subalignment-1.png" alt="plot of chunk display_subalignment"><figcaption>Figure: plot of chunk display_subalignment</figcaption></figure> </p>
 <h2 id="generating-a-distance-matrix">Generating a distance matrix</h2>
 <ul>
 <li>Several algorithmic approaches for obtaining genetic distances</li>
@@ -1108,7 +1108,7 @@ myseqs.njtree
 </code></pre><h2 id="plotting-a-tree">Plotting a tree</h2>
 <pre><code class="lang-r">plot(myseqs.njtree,type=<span class="hljs-string">&quot;unrooted&quot;</span>,cex=<span class="hljs-number">0.5</span>)
 </code></pre>
-<p><figure><img src="figure/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9"><figcaption>Figure: plot of chunk unnamed-chunk-9</figcaption></figure> </p>
+<p><figure><img src="figure/plot_unrooted-1.png" alt="plot of chunk plot_unrooted"><figcaption>Figure: plot of chunk plot_unrooted</figcaption></figure> </p>
 <h2 id="questions-and-concerns-implementation">Questions and concerns: implementation</h2>
 <ul>
 <li>&apos;I can&apos;t remember all that typing&apos;...</li>

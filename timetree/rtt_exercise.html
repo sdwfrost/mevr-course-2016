@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="7.2.1" data-basepath=".." data-revision="Fri May 22 2015 13:32:44 GMT+0100 (BST)">
+    <div class="book" data-level="7.2.1" data-basepath=".." data-revision="Fri May 22 2015 13:43:17 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1024,26 +1024,7 @@
 <span class="hljs-keyword">library</span>(phangorn)
 <span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;chronos.R&quot;</span>)
 </code></pre>
-<pre><code>## Loading required package: adephylo
-## Loading required package: ade4
-## 
-## Attaching package: &apos;ade4&apos;
-## 
-## The following object is masked from &apos;package:IRanges&apos;:
-## 
-##     score
-## 
-## The following object is masked from &apos;package:BiocGenerics&apos;:
-## 
-##     score
-## 
-## 
-## Attaching package: &apos;adephylo&apos;
-## 
-## The following object is masked from &apos;package:ade4&apos;:
-## 
-##     orthogram
-</code></pre><pre><code class="lang-r">seq.fn &lt;- <span class="hljs-string">&quot;H5N1.fas&quot;</span>
+<pre><code class="lang-r">seq.fn &lt;- <span class="hljs-string">&quot;H5N1.fas&quot;</span>
 </code></pre>
 <pre><code class="lang-r">stub &lt;- strsplit(seq.fn,<span class="hljs-string">&quot;.&quot;</span>,fixed=<span class="hljs-literal">TRUE</span>)[<span class="hljs-number">1</span>]
 myseqs &lt;- read.dna(seq.fn,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">FALSE</span>)

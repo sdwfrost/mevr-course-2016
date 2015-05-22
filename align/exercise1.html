@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2.1" data-basepath=".." data-revision="Fri May 22 2015 13:32:44 GMT+0100 (BST)">
+    <div class="book" data-level="3.2.1" data-basepath=".." data-revision="Fri May 22 2015 13:43:17 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1022,10 +1022,22 @@
 <h2 id="prerequisites">Prerequisites</h2>
 <p>First, load the libraries you need.</p>
 <pre><code class="lang-r"><span class="hljs-keyword">library</span>(Biostrings)
-<span class="hljs-keyword">library</span>(msa)
+</code></pre>
+<pre><code>## Loading required package: XVector
+</code></pre><pre><code class="lang-r"><span class="hljs-keyword">library</span>(msa)
 <span class="hljs-keyword">library</span>(seqinr)
 </code></pre>
-<p>It&apos;s also useful to set any run-specific filenames at the beginning, so you can reuse the document more easily.</p>
+<pre><code>## 
+## Attaching package: &apos;seqinr&apos;
+## 
+## The following object is masked from &apos;package:Biostrings&apos;:
+## 
+##     translate
+## 
+## The following objects are masked from &apos;package:ape&apos;:
+## 
+##     as.alignment, consensus
+</code></pre><p>It&apos;s also useful to set any run-specific filenames at the beginning, so you can reuse the document more easily.</p>
 <pre><code class="lang-r">nucseq.fn &lt;- <span class="hljs-string">&quot;ray2000_edited.fas&quot;</span>
 </code></pre>
 <p>I&apos;ll use additional file stubs to keep track of what we&apos;ve done to the original data.</p>
@@ -1048,10 +1060,12 @@ nucseq
 ## [71]   411 CTTTTGGCACTTCTCTCGTG...TCTATACGGGGCACATCACT AF271840
 </code></pre><pre><code class="lang-r">nucseq.align &lt;- msa(nucseq,method=<span class="hljs-string">&quot;Muscle&quot;</span>)
 </code></pre>
-<p>Save the resulting alignment to a file.</p>
+<pre><code>## Error in is(inputSeq, &quot;character&quot;): object &apos;nucseq&apos; not found
+</code></pre><p>Save the resulting alignment to a file.</p>
 <pre><code class="lang-r">writeXStringSet(nucseq.align@unmasked,paste(nucseq.fn,<span class="hljs-string">&quot;.align&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
 </code></pre>
-<h2 id="align-in-protein-space">Align in protein space</h2>
+<pre><code>## Error in is(x, &quot;XStringSet&quot;): object &apos;nucseq.align&apos; not found
+</code></pre><h2 id="align-in-protein-space">Align in protein space</h2>
 <p>First, we have to translate the sequences into amino acids.</p>
 <pre><code class="lang-r">aaseq &lt;- lapply(read.fasta(nucseq.fn),translate)
 </code></pre>
