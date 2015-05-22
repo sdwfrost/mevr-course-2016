@@ -37,10 +37,14 @@
         <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-quizzes/quizzes.css">
         
     
+        
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-image-captions/image-captions.css">
+        
+    
     
 
         
-    <div class="book" data-level="4.2.1" data-basepath=".." data-revision="Fri May 22 2015 12:20:18 GMT+0100 (BST)">
+    <div class="book" data-level="4.2.1" data-basepath=".." data-revision="Fri May 22 2015 12:24:44 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1024,7 +1028,7 @@ myalignment &lt;- read.dna(myalignment.filename,format=<span class="hljs-string"
 <p>Plot out the distances.</p>
 <pre><code class="lang-r">hist(myalignment.dist.tn93[lower.tri(myalignment.dist.tn93)],xlab=<span class="hljs-string">&quot;Distance&quot;</span>,ylab=<span class="hljs-string">&quot;Frequency&quot;</span>,main=<span class="hljs-string">&quot;&quot;</span>,col=<span class="hljs-string">&quot;grey&quot;</span>)
 </code></pre>
-<p><img src="figure/plot_distances-1.png" alt="plot of chunk plot_distances"> </p>
+<p><figure><img src="figure/plot_distances-1.png" alt="plot of chunk plot_distances"><figcaption>Figure: plot of chunk plot_distances</figcaption></figure> </p>
 <p>Calculate a neighbour joining tree.</p>
 <pre><code class="lang-r">myalignment.tn93.nj &lt;- nj(myalignment.dist.tn93)
 </code></pre>
@@ -1032,7 +1036,7 @@ myalignment &lt;- read.dna(myalignment.filename,format=<span class="hljs-string"
 <pre><code class="lang-r">plot(myalignment.tn93.nj,<span class="hljs-string">&quot;unrooted&quot;</span>,cex=<span class="hljs-number">0.5</span>)
 add.scale.bar(length=<span class="hljs-number">0.1</span>)
 </code></pre>
-<p><img src="figure/plot_tree-1.png" alt="plot of chunk plot_tree"> </p>
+<p><figure><img src="figure/plot_tree-1.png" alt="plot of chunk plot_tree"><figcaption>Figure: plot of chunk plot_tree</figcaption></figure> </p>
 <p>Bootstrap the alignment; we first define a function to make a tree from the alignment, then call <code>boot.phylo</code>.</p>
 <pre><code class="lang-r">maketree &lt;- <span class="hljs-keyword">function</span>(x) nj(dist.dna(x,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See [this Wikipedia entry](http://en.wikipedia.org/wiki/Models_of_DNA_evolution) for details of this and other models of DNA evolution.">TN93</a>&quot;</span>))
 myalignment.tn93.nj.boot &lt;- boot.phylo(myalignment.tn93.nj,myalignment,maketree,B=<span class="hljs-number">100</span>,block=<span class="hljs-number">3</span>,trees=<span class="hljs-literal">TRUE</span>,quiet=<span class="hljs-literal">FALSE</span>,rooted=<span class="hljs-literal">FALSE</span>)
@@ -1244,13 +1248,13 @@ myalignment.tn93.nj.boot &lt;- boot.phylo(myalignment.tn93.nj,myalignment,maketr
 </code></pre><p>Now we can add the bootstrap supports to the tree.</p>
 <pre><code class="lang-r">plotBS(myalignment.tn93.nj,myalignment.tn93.nj.boot$trees,type=<span class="hljs-string">&quot;phylogram&quot;</span>,cex=<span class="hljs-number">0.5</span>)
 </code></pre>
-<p><img src="figure/plot_bootstrap-1.png" alt="plot of chunk plot_bootstrap"> </p>
+<p><figure><img src="figure/plot_bootstrap-1.png" alt="plot of chunk plot_bootstrap"><figcaption>Figure: plot of chunk plot_bootstrap</figcaption></figure> </p>
 <p>We can also create a network of &apos;similar&apos; sequences, by defining a threshold distance.</p>
 <pre><code class="lang-r">thresh &lt;- <span class="hljs-number">0.01</span>
 myalignment.dist.tn93.net &lt;- network(myalignment.dist.tn93&lt;=thresh)
 plot(myalignment.dist.tn93.net)
 </code></pre>
-<p><img src="figure/plot_network-1.png" alt="plot of chunk plot_network"> </p>
+<p><figure><img src="figure/plot_network-1.png" alt="plot of chunk plot_network"><figcaption>Figure: plot of chunk plot_network</figcaption></figure> </p>
 <p>\end{document}</p>
 
                     

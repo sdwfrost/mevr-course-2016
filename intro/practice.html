@@ -37,10 +37,14 @@
         <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-quizzes/quizzes.css">
         
     
+        
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-image-captions/image-captions.css">
+        
+    
     
 
         
-    <div class="book" data-level="1.1" data-basepath=".." data-revision="Fri May 22 2015 12:20:18 GMT+0100 (BST)">
+    <div class="book" data-level="1.1" data-basepath=".." data-revision="Fri May 22 2015 12:24:44 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1016,7 +1020,7 @@
 <li>Use the <code>install.packages</code> command.</li>
 <li>Use Packages tab in the lower left hand panel.</li>
 </ul>
-<p><img src="img/rstudio.png" alt="RStudio"></p>
+<p><figure><img src="img/rstudio.png" alt="RStudio"><figcaption>Figure: RStudio</figcaption></figure></p>
 <h2 id="loading-libraries">Loading libraries</h2>
 <p>Most libraries are not loaded by default, so you&apos;ll need to load them yourself. Try the following command</p>
 <pre><code class="lang-r"><span class="hljs-keyword">library</span>(ape)
@@ -1060,11 +1064,11 @@ TATCAGACGGTACAGGACTGCAATTGTTCAATCTATCCTGGCCACGTAA
 </code></pre><h2 id="displaying-the-alignment">Displaying the alignment</h2>
 <pre><code class="lang-r">image(myseqs)
 </code></pre>
-<p><img src="figure/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5"> </p>
+<p><figure><img src="figure/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5"><figcaption>Figure: plot of chunk unnamed-chunk-5</figcaption></figure> </p>
 <h2 id="displaying-part-of-an-alignment">Displaying part of an alignment</h2>
 <pre><code class="lang-r">image(myseqs[<span class="hljs-number">1</span>:<span class="hljs-number">10</span>,<span class="hljs-number">100</span>:<span class="hljs-number">200</span>])
 </code></pre>
-<p><img src="figure/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6"> </p>
+<p><figure><img src="figure/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6"><figcaption>Figure: plot of chunk unnamed-chunk-6</figcaption></figure> </p>
 <h2 id="generating-a-distance-matrix">Generating a distance matrix</h2>
 <ul>
 <li>Several algorithmic approaches for obtaining genetic distances</li>
@@ -1089,7 +1093,7 @@ myseqs.njtree
 </code></pre><h2 id="plotting-a-tree">Plotting a tree</h2>
 <pre><code class="lang-r">plot(myseqs.njtree,type=<span class="hljs-string">&quot;unrooted&quot;</span>,cex=<span class="hljs-number">0.5</span>)
 </code></pre>
-<p><img src="figure/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9"> </p>
+<p><figure><img src="figure/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9"><figcaption>Figure: plot of chunk unnamed-chunk-9</figcaption></figure> </p>
 <h2 id="questions-and-concerns-implementation">Questions and concerns: implementation</h2>
 <ul>
 <li>&apos;I can&apos;t remember all that typing&apos;...</li>
