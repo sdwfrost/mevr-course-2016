@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="1.2" data-basepath=".." data-revision="Fri May 22 2015 13:43:17 GMT+0100 (BST)">
+    <div class="book" data-level="1.2" data-basepath=".." data-revision="Fri May 22 2015 13:52:41 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1020,12 +1020,22 @@
                     
                         <h1 id="prerequisites">Prerequisites</h1>
 <p>A number of different libraries are needed for the course. You can install these packages as below.</p>
-<pre><code class="lang-r">cran.pkg &lt;- c(<span class="hljs-string">&quot;devtools&quot;</span>,<span class="hljs-string">&quot;ape&quot;</span>,<span class="hljs-string">&quot;rentrez&quot;</span>,<span class="hljs-string">&quot;seqinr&quot;</span>,<span class="hljs-string">&quot;phangorn&quot;</span>,<span class="hljs-string">&quot;ips&quot;</span>,<span class="hljs-string">&quot;kdetrees&quot;</span>,<span class="hljs-string">&quot;bios2mds&quot;</span>,<span class="hljs-string">&quot;XML&quot;</span>,<span class="hljs-string">&quot;ggplot2&quot;</span>,<span class="hljs-string">&quot;magrittr&quot;</span>)
+<pre><code class="lang-r">cran.pkg &lt;- c(<span class="hljs-string">&quot;devtools&quot;</span>,
+              <span class="hljs-string">&quot;ape&quot;</span>,
+              <span class="hljs-string">&quot;rentrez&quot;</span>,
+              <span class="hljs-string">&quot;seqinr&quot;</span>,
+              <span class="hljs-string">&quot;phangorn&quot;</span>,
+              <span class="hljs-string">&quot;ips&quot;</span>,
+              <span class="hljs-string">&quot;kdetrees&quot;</span>,
+              <span class="hljs-string">&quot;bios2mds&quot;</span>,
+              <span class="hljs-string">&quot;XML&quot;</span>,
+              <span class="hljs-string">&quot;ggplot2&quot;</span>,
+              <span class="hljs-string">&quot;magrittr&quot;</span>)
 bioc.pkg &lt;- c(<span class="hljs-string">&quot;msa&quot;</span>,<span class="hljs-string">&quot;annotate&quot;</span>)
 rforge.pkg &lt;- c(<span class="hljs-string">&quot;rcolgem&quot;</span>)
 github.pkg &lt;- c(<span class="hljs-string">&quot;GuangchuangYu/ggtree&quot;</span>)
 </code></pre>
-<p>The following will install the missing packages on your system. You will first need to set repositories to install from <a href="../GLOSSARY.html#cran" class="glossary-term" title="The &lt;a href=&quot;http://cran.r-project.org&gt;Central R Archive Network]&lt;/a&gt;.">CRAN</a>, the <a href="../GLOSSARY.html#bioconductor" class="glossary-term" title="&lt;a href=&quot;http://www.bioconductor.org&quot;&gt;Bioconductor&lt;/a&gt; provides tools for the analysis and comprehension of high-throughput genomic data. Bioconductor uses the R statistical programming language,">Bioconductor</a> repositories, and R-Forge.</p>
+<p>The following will install the missing packages on your system. You will first need to set repositories to install from <a href="../GLOSSARY.html#cran" class="glossary-term" title="The &lt;a href=&quot;http://cran.r-project.org&gt;Central R Archive Network]&lt;/a&gt;.">CRAN</a>, the <a href="../GLOSSARY.html#bioconductor" class="glossary-term" title="&lt;a href=&quot;http://www.bioconductor.org&quot;&gt;Bioconductor&lt;/a&gt; provides tools for the analysis and comprehension of high-throughput genomic data. Bioconductor uses the R statistical programming language,">Bioconductor</a> repositories, and <a href="../GLOSSARY.html#r-forge" class="glossary-term" title="&lt;a href=&quot;http://r-forge.r-project.orf&gt;R-Forge&lt;/a&gt; hosts R packages that are in development.">R-Forge</a>.</p>
 <pre><code class="lang-r">setRepositories()
 </code></pre>
 <pre><code class="lang-r">pkg &lt;- c(cran.pkg,bioc.pkg,rforge.pkg)
