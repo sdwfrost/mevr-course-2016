@@ -5,7 +5,7 @@
         <!-- head:start -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Retrieving sequences exercise | </title>
+        <title>Retrieving sequences example | </title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,7 +20,7 @@
         
     
     
-    <link rel="next" href="../align/index.html" />
+    <link rel="next" href="../getseq/exercises.html" />
     
     
     <link rel="prev" href="../getseq/practice.html" />
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="2.2.1" data-basepath=".." data-revision="Fri May 22 2015 14:40:07 GMT+0100 (BST)">
+    <div class="book" data-level="2.2.1" data-basepath=".." data-revision="Fri May 22 2015 14:53:20 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -195,7 +195,22 @@
                         
                             <b>2.2.1.</b>
                         
-                        Retrieving sequences exercise
+                        Retrieving sequences example
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="getseq/exercises.html">
+            
+                
+                    <a href="../getseq/exercises.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.2.</b>
+                        
+                        Exercises
                     </a>
                 
             
@@ -1018,52 +1033,14 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="retrieving-sequences-exercise">Retrieving sequences exercise</h1>
+                        <h1 id="retrieving-sequences-example">Retrieving sequences example</h1>
 <pre><code class="lang-r"><span class="hljs-keyword">library</span>(XML)
 <span class="hljs-keyword">library</span>(rentrez)
 <span class="hljs-keyword">library</span>(ape)
 <span class="hljs-keyword">library</span>(phangorn)
 <span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;utils.R&quot;</span>)
 </code></pre>
-<pre><code>## Loading required package: magrittr
-## Loading required package: annotate
-## Loading required package: AnnotationDbi
-## Loading required package: stats4
-## Loading required package: BiocGenerics
-## Loading required package: parallel
-## 
-## Attaching package: &apos;BiocGenerics&apos;
-## 
-## The following objects are masked from &apos;package:parallel&apos;:
-## 
-##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-##     clusterExport, clusterMap, parApply, parCapply, parLapply,
-##     parLapplyLB, parRapply, parSapply, parSapplyLB
-## 
-## The following object is masked from &apos;package:stats&apos;:
-## 
-##     xtabs
-## 
-## The following objects are masked from &apos;package:base&apos;:
-## 
-##     anyDuplicated, append, as.data.frame, as.vector, cbind,
-##     colnames, do.call, duplicated, eval, evalq, Filter, Find, get,
-##     intersect, is.unsorted, lapply, Map, mapply, match, mget,
-##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-##     rbind, Reduce, rep.int, rownames, sapply, setdiff, sort,
-##     table, tapply, union, unique, unlist, unsplit
-## 
-## Loading required package: Biobase
-## Welcome to Bioconductor
-## 
-##     Vignettes contain introductory material; view with
-##     &apos;browseVignettes()&apos;. To cite Bioconductor, see
-##     &apos;citation(&quot;Biobase&quot;)&apos;, and for packages &apos;citation(&quot;pkgname&quot;)&apos;.
-## 
-## Loading required package: GenomeInfoDb
-## Loading required package: S4Vectors
-## Loading required package: IRanges
-</code></pre><p>You also need to set your email address.</p>
+<p>You also need to set your email address.</p>
 <pre><code class="lang-r">entrez_email &lt;- <span class="hljs-string">&quot;sdwfrost@gmail.com&quot;</span>
 </code></pre>
 <h1 id="getting-sequences-e-g-from-a-paper">Getting sequences e.g. from a paper</h1>
@@ -1167,11 +1144,6 @@ length(seq.ids)
 </code></pre>
 <pre><code class="lang-r">write(seqs.fasta,<span class="hljs-string">&quot;hcv_genomes.fas&quot;</span>)
 </code></pre>
-<h1 id="exercises">Exercises</h1>
-<ol>
-<li>Get all sequences of Ebola published by Gire et al. (Science, 2014).</li>
-<li>Get all full genomes of MERS Coronavirus.</li>
-</ol>
 
                     
                     </section>
@@ -1185,7 +1157,7 @@ length(seq.ids)
         <a href="../getseq/practice.html" class="navigation navigation-prev " aria-label="Previous page: Practice"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../align/index.html" class="navigation navigation-next " aria-label="Next page: Sequence alignment"><i class="fa fa-angle-right"></i></a>
+        <a href="../getseq/exercises.html" class="navigation navigation-next " aria-label="Next page: Exercises"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
