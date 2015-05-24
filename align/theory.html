@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.1" data-basepath=".." data-revision="Fri May 22 2015 14:53:20 GMT+0100 (BST)">
+    <div class="book" data-level="3.1" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -274,15 +274,45 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.2.1" data-path="align/exercise1.html">
+        <li class="chapter " data-level="3.2.1" data-path="align/example1.html">
+            
+                
+                    <a href="../align/example1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.1.</b>
+                        
+                        Nucleotide alignment
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="align/example2.html">
+            
+                
+                    <a href="../align/example2.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.2.</b>
+                        
+                        Reverse alignment
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="align/exercise1.html">
             
                 
                     <a href="../align/exercise1.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.1.</b>
+                            <b>3.2.3.</b>
                         
-                        Alignment exercise
+                        Exercise
                     </a>
                 
             
@@ -1054,6 +1084,90 @@
 <li>This approach gives better alignments than using the `wrong&apos; cost matrix</li>
 </ul>
 </li>
+</ul>
+<h2 id="cost-matrices">Cost matrices</h2>
+<ul>
+<li>In order to find the `best&apos; alignment, we specify costs associated with differences between sequences e.g.</li>
+</ul>
+<pre><code>ARNDCQEGHILKMFPSTWYVBZX
+ 4
+-1  5
+-2  0  6
+-2 -2  1  6
+ 0 -3 -3 -3  9
+-1  1  0  0 -3  5
+-1  0  0  2 -4  2  5
+ 0 -2  0 -1 -3 -2 -2  6
+-2  0  1 -1 -3  0  0 -2  8
+-1 -3 -3 -3 -1 -3 -3 -4 -3  4
+-1 -2 -3 -4 -1 -2 -3 -4 -3  2  4
+-1  2  0 -1 -3  1  1 -2 -1 -3 -2  5
+-1 -1 -2 -3 -1  0 -2 -3 -2  1  2 -1  5
+-2 -3 -3 -3 -2 -3 -3 -3 -1  0  0 -3  0  6
+-1 -2 -2 -1 -3 -1 -1 -2 -2 -3 -3 -1 -2 -4  7
+ 1 -1  1  0 -1  0  0  0 -1 -2 -2  0 -1 -2 -1  4
+ 0 -1  0 -1 -1 -1 -1 -2 -2 -1 -1 -1 -1 -2 -1  1  5
+-3 -3 -4 -4 -2 -2 -3 -2 -2 -3 -2 -3 -1  1 -4 -3 -2 11
+-2 -2 -2 -3 -2 -1 -2 -3  2 -1 -1 -2 -1  3 -3 -2 -2  2  7
+ 0 -3 -3 -3 -1 -2 -2 -3 -3  3  1 -2  1 -1 -2 -2  0 -3 -1  4
+-2 -1  3  4 -3  0  1 -1  0 -3 -4  0 -3 -3 -2  0 -1 -4 -3 -3  4
+-1  0  0  1 -3  3  4 -2  0 -3 -3  1 -1 -3 -1  0 -1 -3 -2 -2  1  4
+ 0 -1 -1 -1 -2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -2  0  0 -2 -1 -1 -1 -1 -1
+</code></pre><h2 id="where-do-these-cost-matrices-come-from">Where do these cost matrices come from?</h2>
+<ul>
+<li>Cost matrices are typically derived from curated alignments, usually not of viral sequences</li>
+<li>Given an amino acid alignment (large, or lots of small alignments), we can calculate a substitution matrix from the data, from which we can derive a cost matrix, assuming a given level of divergence<ul>
+<li>This approach gives better alignments than using the `wrong&apos; cost matrix</li>
+</ul>
+</li>
+</ul>
+<h2 id="pairwise-and-multiple-alignment">Pairwise and multiple alignment</h2>
+<ul>
+<li>Given a cost matrix, and gap opening/extension penalties, it is possible to find the optimum alignment of a pair of sequences<ul>
+<li>Pairwise alignment is particularly useful for helping to check reading frames, and to map partial sequences to regions in a genome</li>
+</ul>
+</li>
+<li>In practice, we almost always have more than two sequences<ul>
+<li>Multiple sequence alignment involves heuristics to try to find the best alignment</li>
+</ul>
+</li>
+</ul>
+<h2 id="nucleotide-amino-acid-or-codon-alignments">Nucleotide, amino acid, or codon alignments?</h2>
+<ul>
+<li>In viruses, especially RNA viruses with relatively small genomes, most of the genome is coding, and there may be extensive genetic variation<ul>
+<li>This makes it difficult to align nucleotide sequences}</li>
+<li>Sequence alignment programs are typically not optimised for closely related (but diverse) nucleotide sequences</li>
+</ul>
+</li>
+<li>Alternatively, we can align sequences in amino acid space<ul>
+<li>20 versus 4 characters make it easier to align</li>
+<li>We need to translate the sequences correctly</li>
+<li>We need to backtranslate the amino acid alignment</li>
+</ul>
+</li>
+<li>Codon-based alignments offer the best of both worlds for coding sequences<ul>
+<li>61 states</li>
+<li>Can fix frameshifts</li>
+<li>Relatively few programs have been developed for this, and they are very slow</li>
+</ul>
+</li>
+</ul>
+<h2 id="reverse-alignment">Reverse alignment</h2>
+<ul>
+<li>A common approach used in viral sequence analysis is to align translated nucleotide sequences in amino acid space</li>
+<li>This helps to keep coding sequences in frame</li>
+<li>However, this requires all the nucleotide sequences to be already in frame</li>
+</ul>
+<h2 id="strategies-for-finding-the-right-frame">Strategies for finding the right frame</h2>
+<ul>
+<li>Count the number of stops, and choose the frame with zero stops</li>
+<li>Find the longest open reading frame</li>
+<li>Align against an in-frame reference</li>
+</ul>
+<h2 id="graphical-versus-batch-processing">Graphical versus batch processing</h2>
+<ul>
+<li>It is extremely important to look at the alignment; every analysis downstream depends on having a good alignment</li>
+<li>It is also important to avoid manually fixing sequence alignments, keeping a record of these changes if unavoidable</li>
 </ul>
 
                     

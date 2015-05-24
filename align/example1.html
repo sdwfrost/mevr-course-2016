@@ -5,7 +5,7 @@
         <!-- head:start -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Exercise | </title>
+        <title>Nucleotide alignment | </title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../distance/index.html" />
+    <link rel="next" href="../align/example2.html" />
     
     
-    <link rel="prev" href="../align/example2.html" />
+    <link rel="prev" href="../align/practice.html" />
     
 
         <!-- head:end -->
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2.3" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
+    <div class="book" data-level="3.2.1" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -274,7 +274,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.2.1" data-path="align/example1.html">
+        <li class="chapter active" data-level="3.2.1" data-path="align/example1.html">
             
                 
                     <a href="../align/example1.html">
@@ -304,7 +304,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3.2.3" data-path="align/exercise1.html">
+        <li class="chapter " data-level="3.2.3" data-path="align/exercise1.html">
             
                 
                     <a href="../align/exercise1.html">
@@ -1063,7 +1063,43 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="alignment-exercise">Alignment exercise</h1>
+                        <h1 id="alignment-example">Alignment example</h1>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>First, load the libraries you need. We will use <code>Biostrings</code>, which will allow us to translate sequences, <code>msa</code>, which allows us to align using several external packages (bundled into R for easy installation), and <code>seqinr</code> for more sequence manipulation.</p>
+<pre><code class="lang-r"><span class="hljs-keyword">library</span>(Biostrings)
+<span class="hljs-keyword">library</span>(msa)
+<span class="hljs-keyword">library</span>(seqinr)
+<span class="hljs-keyword">library</span>(magrittr)
+<span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;utils.R&quot;</span>)
+</code></pre>
+<p>It&apos;s also useful to set any run-specific filenames at the beginning, so you can reuse the document more easily. For this example, I&apos;ll use the Ray et al. (2000) dataset, edited so that it isn&apos;t aligned.</p>
+<pre><code class="lang-r">nucseq.fn &lt;- <span class="hljs-string">&quot;ray2000_edited.fas&quot;</span>
+myref.fn &lt;- <span class="hljs-string">&quot;ray2000_ref.fas&quot;</span>
+</code></pre>
+<p>I&apos;ll use additional file stubs to keep track of what we&apos;ve done to the original data.</p>
+<h2 id="align-in-nucleotide-space">Align in nucleotide space</h2>
+<p>First, we will align in nucleotide space. This is advisable for non-coding data (e.g. the LTR of many viruses), and can be sufficient for many coding regions.</p>
+<pre><code class="lang-r">nucseq &lt;- readDNAStringSet(nucseq.fn)
+nucseq
+</code></pre>
+<pre><code>##   A DNAStringSet instance of length 71
+##      width seq                                         names               
+##  [1]   410 TCTTGGCTCTGTTGTCCTGT...TCTATCCTGGCCACGTAACT AF271819
+##  [2]   410 TTTTGGCACTTCTCTCATGC...TTTATGCAGGCCATGTTACC AF271820
+##  [3]   410 TTCTGGCCCTTCTTTCATGC...TCTATGCAGGCCATATCACC AF271821
+##  [4]   410 TTCTGGCCCTTCTCTCATGC...TCTATCCAGGCCACATTACC AF271823
+##  [5]   410 TTCTGGCCCTTCTCTCATGC...TCTATTCAGGCCACGTTACG AF271824
+##  ...   ... ...
+## [67]   411 CTCTTGGCACTTCTCTCGTG...TCTATACAGGGCACATCACC AF271868
+## [68]   411 CTCTTGGCACTTCTCTCGTG...TCTATACGGGGCACATTACT AF271826
+## [69]   411 CTCTTGGCACTTCTCTCTTG...TCTATACAGGGCACATCACT AF271837
+## [70]   411 CTCTTGGCACTTCTCTCGTG...TCTACACAGGGCACATCACT AF271846
+## [71]   411 CTTTTGGCACTTCTCTCGTG...TCTATACGGGGCACATCACT AF271840
+</code></pre><pre><code class="lang-r">nucseq.align &lt;- msa(nucseq,method=<span class="hljs-string">&quot;Muscle&quot;</span>)
+</code></pre>
+<p>Save the resulting alignment to a file.</p>
+<pre><code class="lang-r">writeXStringSet(nucseq.align@unmasked,paste(nucseq.fn,<span class="hljs-string">&quot;.align&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+</code></pre>
 
                     
                     </section>
@@ -1074,10 +1110,10 @@
         </div>
 
         
-        <a href="../align/example2.html" class="navigation navigation-prev " aria-label="Previous page: Reverse alignment"><i class="fa fa-angle-left"></i></a>
+        <a href="../align/practice.html" class="navigation navigation-prev " aria-label="Previous page: Practice"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../distance/index.html" class="navigation navigation-next " aria-label="Next page: Distance-based analyses"><i class="fa fa-angle-right"></i></a>
+        <a href="../align/example2.html" class="navigation navigation-next " aria-label="Next page: Reverse alignment"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

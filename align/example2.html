@@ -5,7 +5,7 @@
         <!-- head:start -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Exercise | </title>
+        <title>Reverse alignment | </title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../distance/index.html" />
+    <link rel="next" href="../align/exercise1.html" />
     
     
-    <link rel="prev" href="../align/example2.html" />
+    <link rel="prev" href="../align/example1.html" />
     
 
         <!-- head:end -->
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2.3" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
+    <div class="book" data-level="3.2.2" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -289,7 +289,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2.2" data-path="align/example2.html">
+        <li class="chapter active" data-level="3.2.2" data-path="align/example2.html">
             
                 
                     <a href="../align/example2.html">
@@ -304,7 +304,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3.2.3" data-path="align/exercise1.html">
+        <li class="chapter " data-level="3.2.3" data-path="align/exercise1.html">
             
                 
                     <a href="../align/exercise1.html">
@@ -1063,7 +1063,150 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="alignment-exercise">Alignment exercise</h1>
+                        <h2 id="align-in-protein-space">Align in protein space</h2>
+<p>Alignment in protein space is potentially more accurate (although not always), but to do so reliably is not straightforward. This makes this section more appropriate for advanced users, who want to automate alignment of potentially difficult sequence datasets.</p>
+<h3 id="loading-libraries">Loading libraries</h3>
+<pre><code class="lang-r"><span class="hljs-keyword">library</span>(Biostrings)
+<span class="hljs-keyword">library</span>(seqinr)
+<span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;utils.R&quot;</span>)
+</code></pre>
+<h2 id="getting-a-good-translation">Getting a good translation</h2>
+<p>First, we have to translate the sequences into amino acids. We can&apos;t assume that the sequences are in frame 1, so we have to find the correct frame for each.</p>
+<h3 id="identifying-the-right-frame-by-counting-stops">Identifying the right frame by counting stops</h3>
+<p>The simplest way is to count the number of stop codons in each reading frame.</p>
+<pre><code class="lang-r">nucseq.fn &lt;- <span class="hljs-string">&quot;ray2000_edited.fas&quot;</span>
+nucseq &lt;- read.fasta(nucseq.fn)
+</code></pre>
+<p>In <code>utils.R</code>, there is a function that counts the number of stop codons in each frame.</p>
+<pre><code class="lang-r">numstops &lt;- lapply(nucseq,countstops)
+</code></pre>
+<p>However, when we look at the results, we can see that there is one sequence where there are two frames with no stop codons.</p>
+<pre><code class="lang-r">lapply(numstops,paste,collapse=<span class="hljs-string">&quot; &quot;</span>) %&gt;% unlist %&gt;% unname %&gt;% table %&gt;% as.data.frame.table
+</code></pre>
+<pre><code>##        . Freq
+## 1  0 3 2    1
+## 2  0 3 3    1
+## 3  0 3 4    1
+## 4  0 3 5    2
+## 5  0 4 2    6
+## 6  0 4 3   22
+## 7  0 4 4    9
+## 8  0 4 6    1
+## 9  0 5 2    1
+## 10 0 5 3    2
+## 11 0 5 4    4
+## 12 0 6 2    2
+## 13 0 6 4    1
+## 14 0 6 5    1
+## 15 0 7 3    2
+## 16 0 7 7    1
+## 17 0 8 2    1
+## 18 0 8 4    1
+## 19 1 4 0    1
+## 20 1 5 0    1
+## 21 1 5 3    1
+## 22 1 6 5    1
+## 23 2 3 0    1
+## 24 2 4 0    1
+## 25 2 6 0    1
+## 26 3 3 0    2
+## 27 4 3 0    1
+## 28 5 0 0    1
+## 29 6 4 0    1
+</code></pre><h3 id="finding-open-reading-frames">Finding open reading frames</h3>
+<p>Another approach involves finding the longest open reading frame.</p>
+<pre><code class="lang-r">nucseq.fn &lt;- <span class="hljs-string">&quot;ray2000_edited.fas&quot;</span>
+nucseq.orf.fn &lt;- <span class="hljs-string">&quot;ray2000_edited.fas.orf&quot;</span>
+</code></pre>
+<p>Finding the longest open reading frame greater than a minimum size (say 400 bases) is possible in R, but I have yet to find a solution that is as fast as using an external program. We will use <code>getorf</code> from the EMBOSS software suite.</p>
+<pre><code class="lang-r">cmd &lt;- sprintf(<span class="hljs-string">&quot;getorf -sequence %s -outseq %s -find 2 -minsize 405&quot;</span>,nucseq.fn,nucseq.orf.fn)
+system(cmd)
+</code></pre>
+<p>Here we can see that we now have one less sequence than before.</p>
+<pre><code class="lang-r">nucseq.orf &lt;- read.fasta(nucseq.orf.fn)
+length(nucseq.orf)
+</code></pre>
+<pre><code>## [1] 70
+</code></pre><h3 id="align-to-a-reference-sequence">Align to a reference sequence</h3>
+<p>Another approach is to map to a reference sequence that is in frame. We load in a reference sequence.</p>
+<pre><code class="lang-r">subject &lt;- read.fasta(<span class="hljs-string">&quot;hcv4.fas&quot;</span>)[[<span class="hljs-number">1</span>]] %&gt;%
+  as.character %&gt;%
+  toupper %&gt;%
+  c2s
+subject
+</code></pre>
+<pre><code>## [1] &quot;TTCACGCAGAAAGCGTCTAGCCATGGCGTTAGTATGAGTGTTGTACAGCCTCCAGGACCCCCCCTCCCGGGAGAGCCATAGTGGTCTTCGGAACCGGTGAGTACACCGGAATCGCCGGGATGACCGGGTCCTTTCTTGGATTAACCCGCTCAATGCCCGGAAATTTGGGCGTGCCCCCGCAAGACTGCTAGCCGAGTAGTGTTGGGTCGCGAAAGGCCTTGCGGTACTGCCTGATAGGGTGCTTGCGAGTGCCCCGGGAGGTCTCGTAGACCGTGCACCATGAGCACGAATCCTAAACCTCAAAGAAAAACCAAACGTAACACCAACCGCCGCCCAATGGACGTTAAGTTCCCGGGTGGTGGCCAGATCGTTGGCGGAGTTTACTTGTTGCCGCGCAGGGGCCCCAGATTGGGTGTGCGCGCGACTCGGAAGACTTCGGAGCGGTCGCAACCTCGTGGAAGACGCCAACCTATCCCCAAGGCGCGTCGACCCGAGGGAAGGTCCTGGGCACAACCAGGATATCCATGGCCTCTTTACGGTAATGAGGGTTGTGGGTGGGCAGGATGGCTCTTGTCCCCCCGTGGCTCTCGACCGTCTTGGGGCCCAAATGATCCCCGCGGGAGGTCCCGCAATTTGGGTAAGGTCATCGATACCCTAACCTGCGGCTTCGCCGACCTCATGGGATACATCCCGCTCGTAGGCGCCCCCGTGGGTAGCGTCGCCAGGGCCCTGGCACATGGTGTCAGGGCTTTGGAGGACGGGATCAATTATGCAACAGGGAATCTCCCCGGTTGCTCCTTTTCTATCTTCCTCTTGGCACTTCTTTCGTGCCTGACTGTCCCCGCTTCGGCCGTTAACTATCGCAATGTCTCAGGCATCTACCATGTCACCAATGACTGCCCGAATTCAAGCATAGTGTATGAGGCCGACCATCACATCATGCACCTTCCAGGTTGCGTGCCCTGCGTGAGAGAGGGGAATCAGTCACGCTGCTGGGTGGCCCTTACTCCTACCGTCGCAGCGCCATACATCGGCGCACCGCTTGAGTCCTTACGGAGTCATGTGGATTTGATGGTGGGGGCCGCCACTGTCTGCTCGGGTCTTTACATCGGGGACCTGTGTGGCGGCTTGTTCCTAGTTGGCCAGATGTTTTCATTCCGACCACGGCGCCACTGGACCACCCAGGATTGCAATTGTTCCATCTACACAGGGCACATTACAGGCCACAGAATGGCCTGGGACATGATGATGAACTGGAGTCCAACAACCACCTTAGTTCTCGCCCAGGTCATGAGGATCCCAACCACTCTGGTAGACTTACTCTCTGGAGGCCACTGGGGTGTCCTCGTGGGGGTGGCCTATTTCAGCATGCAGGCCAATTGGGCCAAAGTCATCTTGGTCCTATTCCTCTTTGCAGGGGTTGATGCCGAGACTCACGTGTCTGGGGCAGCAGTCGGCCGGAGTACCGCCGGCTTGGCTAACCTCTTTTCTTCTGGGTCTAAGCAGAATTTACAGCTCATCAACAGCAATGGGAGCTGGCATATAAATAGGACTGCCCTTAACTGCAATGACAGCTTAAACACTGGGTTCTTGGCTAGCTTGTTCTACACCCACAAGTTTAACAGCTCAGGGTGTTCCGAACGGCTCGCGTGCTGCAAGAGCCTTGACAGCTACGGCCAAGGCTGGGGCCCACTCGGGGTCGCTAACATCAGCGGCTCGTCTGATGACAGGCCTTATTGCTGGCACTACGCGCCTCGGCCATGCGGGATTGTGCCAGCATCCAGTGTGTGTGGCCCCGTGTATTGTTTCACTCCCAGCCCTGTCGTGGTCGGTACTACTGATCACGTCGGGGTCCCTACTTACACCTGGGGGGAGAACGAGACTGATGTCTTCCTTTTGAACTCGACCAGACCGCCGCATGGTGCGTGGTTTGGATGCGTGTGGATGAACAGTACCGGGTTCACCAAAACCTGTGGCGCCCCTCCATGCGAGGTTAACACCAATAATGGGACCTGGCACTGCCCCACCGATTGCTTCAGGAAGCATCCGGAGACTACCTACGCCAAGTGCGGATCAGGGCCTTGGATCACACCACGCTGCCTGATTGATTACCCGTACCGGCTGTGGCATTTCCCGTGCACCGCCAACTTCTCCGTCTTTAACATCAGGACATTTGTCGGCGGTATAGAGCATCGGATGCAAGCGGCATGCAACTGGACCAGGGGGGAAGTCTGTGGCTTGGAGCACAGGGATCGGGTAGAGCTATCACCCCTGCTCCTTACCACTACAGCGTGGCAGATCCTCCCCTGCTCTTTCACCACTTTACCTGCCCTCTCCACCGGCTTGATCCACCTCCACCAAAATATCGTGGACGTCCAGTACCTCTATGGTGTTGGATCTGCAGTGGTATCTTGGGCCCTTAAGTGGGAATATGTGGTGCTCGCGTTCCTGCTTCTCGCGGACGCGAGAGTCTCTGCCTACCTATGGATGATGTTTATGGTAAGTCAAGTTGAGGCGGCTCTGTCCAACCTAATTAACATCAATGCTGCTTCAGCCGCTGGTGCCCAAGGCTTCTGGTACGCCATCCTCTTCATCTGCATTGTCTGGCATGTCAAGGGCCGGTTCCCAGCTGCTGCTGCCTACGCAGCCTGCGGGCTGTGGCCCTGTTTTCTCCTGCTTCTGATGCTGCCTGAGAGGGCTTATGCATACGACCAGGAAGTGGCAGGGTCCCTTGGCGGCGCCATCGTTGTCATGCTGACCATTCTGACACTGTCTCCGCACTACAAGTTATGGCTGGCTAGGGGATTGTGGTGGATCCAATATTTTATAGCTAGGACCGAGGCTGTGCTGCATGTCTATATTCCATCCTTCAACGTGCGCGGGCCTCGCGACTCAGTGATTGTTCTTGCAGTCCTGGTCTGTCCAGACCTAGTATTTGACATCACAAAATATCTTCTGGCCATCTTAGGGCCCCTCCACATACTCCAGGCCTCGCTCCTACGCATCCCTTACTTTGTGAGGGCACAAGCGCTGGTTAAGATCTGCAGCTTGTTGCGTGGGGTAGTTTATGGCAAGTACTTCCAAATGGTCGTGCTTAAAAGCAGGGGCCTGACTGGTACTTACATCTATGACCACCTTACTCCCATGTCAGATTGGCCGCCTTACGGCCTCCGCGATTTGGCGGTGGCCCTAGAGCCAGTTGTGTTCACGCCCATGGAGAAGAAAGTCATCGTCTGGGGCGCTGACACCGCTGCGTGCGGAGACATCATAAGGGGATTACCTGTTTCGGCCAGGTTGGGCAATGAGATCTTGCTCGGACCAGCCGATACAGAAACATCAAAGGGGTGGAGACTCCTTGCCCCCATCACAGCATACGCNCAGCAGACCCGCGGCTTGTTCAGCACCATCGTAACGAGCCTCACTGGCAGGGACACCAATGAGAATTGTGGCGAAGTGCAGGTCTTATCCACCGCTACGCAGTCCTTCCTGGGTACTGCGGTTAACGGCGTGATGTGGACCGTCTACCACGGGGCGGGTGCCAAGACCATCAGCGGCCCGAAGGGACCTGTCAATCAAATGTACACTAATGTTGACCAAGACTTGGTGGGGTGGCCAGCACCCCCCGGAGTCAGATCTCTTGCTCCGTGCACCTGCGGCTCGGCAGACTTGTATCTAGTCACCAGGCACGCGGATGTAATACCCGTGCGCAGGAGAGGAGACACCAGAGGAGCTCTCTTGAGCCCTAGACCAATATCCATTCTTAAGGGATCTTCCGGAGGTCCGCTGCTGTGCCCCATGGGACACCGCGCCGGCATATTCCGTGCGGCGGTGTGTACTCGGGGGGTAGCCAAGGCGGTAGACTTCGTCCCGGTTGAATCTCTTGAGACTACCATGAGATCACCAGTGTTCACTGACAACTCAACACCCCCAGCAGTGCCCCAGACCTACCAGGTCGCGCACCTACACGCACCAACAGGAAGTGGCAAGAGCACTAAGGTCCCGGCGGCGCATGCTGCCCAAGGCTATAAAGTGCTAGTGCTCAATCCTTCGGTTGCGGCCACACTGGGTTTTGGGGTATACATGTCCAAGGCATATGGCATCGACCCGAACATCCGGTCGGGAGTCAGGACCATCACCACGGGTGCGCCAATCACGTACTCAACGTATGGTAAGTTCCTGGCTGATGGAGGTTGCAGCGGAGGGGCATACGACATAATCATCTGTGACGAGTGCTATTCCACTGACTCCACAACGATCCTTGGCATAGGCACAGTCCTGGACCAAGCGGAGACCGCTGGAGTGCGCCTCACCGTGCTCGCGACTGCTACTCCGCCAGGGTCAGTGACTACACCTCATTCCAACATAGAGGAGGTCGCCCTGCCAACAACGGGGGAAATACCCTTTTACGGCAAGGCGATCCCTCTGGAGCTGATCAAGGGGGGCAGACATCTCATCTTCTGCCATTCAAAGAAAAAGTGCGATGAACTGGCCAGACAACTGACATCTCTTGGTCTGAATGCCGTAGCCTACTACAGAGGCTTAGACGTTTCGGTGATTCCCACGTCTGGGGACGTCGTGGTATGCGCCACGGACGCCCTCATGACGGGTTTCACCGGCGACTTTGACTCAGTGATAGACTGCAATACATCTGTGATACAGACTGTTGACTTCAGCTTGGACCCCACCTTCTCCATAGAGATTACAACCGTTCCCCAGGACGCGGTATCCCGCAGCCAGCGGAGAGGCCGCACTGGTAGGGGGAGGTTGGGCACATACCGGTATGTCACCCCGGGAGAGAGACCATCAGGCATGTTTGACACTGCAGAGCTTTGCGAGTGCTACGATGCCGGGTGCGCCTGGTACGAGCTGACACCTGCTGAAACCACAACAAGGCTGAAAGCTTACTTCGACACACCAGGCCTTCCTGTGTGCCAAGACCATCTGGAATTCTGGGAGAGCGTCTTTACAGGGTTAACCCACATAGACGGTCATTTCCTATCCCAGACCAAGCAATCGGGTGAGAATTTCCCGTATCTTGTTGCTTACCAAGCGACGGTGTCGGCCAAGGTCTGGCTCGCTCCACCAAGCTGGGACACCATGTGGAAGTGCCTAATTCGCCTTAAGCCCACCCTGCACGGGCCCACGCCCCTCCTCTACAGACTGGGGTCTGTGCAGAATGAAGTGGTGCTCACCCATCCCATCACCAAATACATCATGGCTTGCATGTCAGCTGATCTCGAGGTAGTGACAAGTACGTGGGTCTTGGTGGGCGGCGTCCTGGCAGCTCTGGCTGCTTACTGTCTTTCAGTGGGCAGCGTAGTGATTGTTGGGAGAGTCGTCCTGTCGGGCCAACCTGCTGTCATTCCTGATCGCGAAGTGCTCTACCAACAGTTCGACGAAATGGAGGAGTGTTCCAAACACCTCCCACTAGTCGAGCACGGGTTACAACTGGCTGAGCAGTTCAAGCAGAAGGCCTTAGGTCTCCTAAATTTCGCTGGCAAGCAAGCCCAAGAGGCAACACCAGTGATCCAGTCTAACTTCGCTAAACTTGAGCAGTTTTGGGCGAACGACATGTGGAATTTCATCAGCGGCATTCAATATCTCGCTGGACTGTCTACTTTGCCAGGCAATCCTGCCATTGCTTCCCTCATGTCCTTTACTGCTGCCGTTACAAGCCCTCTGACCACCCAACAAACCCTCCTTTTTAACATCTTGGGGGGATGGGTGGCCTCACAGATTCGCGACTCCGATGCTTCTACCGCATTCGTCGTGAGCGGCTTGGCGGGGGCGGCAGTTGGCAGTGTGGGCCTTGGCAAAATTTTGGTGGACATTCTGCCCGGTTACGGCGCCGGCGTACGTGGCGCTGTGGTTACCTTCAAGATCATGAGCGGCGAGATGCCTTCCACAGAGGACTTGGTAAATTTGCTCCCGGCCATTCTATCGCCCGGAGCATTGGTGGTGGAGGTGGTATGCCCGGCGATTTTGCGCCGCCACGTGGGCCCGGGCGAAGGGGCCGTGCAGTGGATGAACCGTCTAATTGCGTTCGCATCGCGAGGCAATCACGTGTCTCCCACGCATTACGTCCCTGAGTCCGACGCGGCACGCCGCGTGACCACCATACTATCATCCCTCACTGTGACATCCCTTCTCAGACGCCTCCACAAGTGGATCAATGAAGATTGCTCCACCCCATGTGCCGAATCTTGGCTATGGGAGGTATGGGATTGGGTCTTGCACGTGCTGAGTGACTTCAAGACGTGCTTAAAAGCAAAGTTCGTGCCCTTAATGCCAGGCATCCCCCTCCTCTCATGGCCAAGAGGCTATAAGGGAGAGTGGCGCGGAGATGGCGTGATGCATACGACATGCCCCTGCGGAGCAGATCTGGCAGGTCACATCAAGAACGGCTCGATGAGAATCACCGGGCCGAAAACCTGCAGCAACACATGGCATGGAACCTTCCCCATCAATGCCTACACCACAGGCCCTGGTGTACCCATCCCGGCTCCGAACTACAAGTTCGCGCTTTGGAGGGTGTCCGCCGAGGACTACGTGGAGGTTCGCAGAGTGGGTGATTTCCATTATGTCACCGGGGTAACACAAGACAACATCAAGTTCCCCTGCCAAGTTCCGGCCCCAGAGCTCTTCACGGAAGTGGACGGCATCAGGATACACCGCCACGCCCCTAAGTGCAAACCCTTGCTGCGGGACGAAGTGTCGTTCTCAGTAGGACTCAATTCGTTCGTAGTGGGATCACAACTCCCATGCGAGCCAGAGCCGGACGTGGCAGTGCTAACATCCATGCTGACAGACCCATCACACATAACGGCGGAATCGGCGCGTCGGAGATTGGCTCGAGGGTCACGACCCTCGCTAGCTAGTTCCTCGGCGAGTCAGCTTTCGCCCCGTCTTCTTCAGGCCACGTGTACCGCTCCCCATGACTCCCCTGGTACTGATCTCCTCGAGGCTAACCTCTTGTGGGGGTCTACCGCTACCAGGGTTGAGACGGACGAGAAGGTAATAATACTAGACTCTTTTGAGTCATGTGTGGCTGAGCAAAATGATGACAGGGAAGTCTCGGTTGCCGCGGAAATCCTGCGTCCGACCAAGAAGTTCCCTCCAGCACTACCGATCTGGGCCCGGCCGGACTACAATCCACCTCTTACCGAGACGTGGAAGCAGCAGGACTACCAAGCTCCGACCGTCCACGGTTGCGCTCTGCCTCCGGCAAAGCAGCCCCCTGTTCCCTCTCCCAGGAGGAAACGGACGGTACAGCTCACTGAGTCCGTTGTTTCTACCGCTTTGGCAGAGCTGGCCGCAAAGACCTTTGGCCAGTCAGAGCCGAGCTCAGACCGTGATACAGACCTTACCACCCCAACTGAGACCACAGACTCGGGCCCCATCGTCGTGGATGATGCATCCGATGACGGATCTTATTCGTCAATGCCTCCACTAGAGGGGGAGCCCGGTGACCCGGACTTGACATCAGACTCTTGGTCCACTGTTAGCGGATCGGAGGACGTCGTGTGCTGTTCGATGTCATACTCGTGGACTGGGGCGCTTGTAACACCTTGCGCGGCTGAAGAATCAAAGCTGCCAATTAGCCCCCTGAGCAATTCACTTTTGCGCCATCACAATATGGTGTATGCCACGACCACCCGTTCTGCTGTGACACGGCAGAAGAAGGTGACCTTCGACCGCCTGCAGGTGGTGGACAGTACCTACAATGAAGTGCTTAAGGAGATAAAGGCACGAGCATCCAGAGTGAAGCCACGCTTGCTTACCACAGAGGAAGCTTGCGACCTGACGCCCCCCCACTCAGCCAGATCAAAGTTCGGCTACGGGAAAAAGGATGTTCGGAGCCATTCCCGCAAGGCCATTAACCACATCAGCTCCGTGTGGAAGGACTTGCTGGACGACAACAATACCCCAATTCCAACAACAATCATGGCCAAAAATGAGGTCTTCGCTGTGAACCCAGCGAAGGGAGGTCGGAAGCCTGCTCGCCTGATCGTGTATCCGGATCTCGGATCCCGGGTTTGCGAGAAGAGAGCGCTTCACGACGTCATCAAAAAAACTGCCTTAGCCGTGATGGGAGCCGCTTATGGCTTCCAATACTCCCCAGCGCAGCGGGTGGAATTTCTTCTGACTGCTTGGAAGTCGAAGAACGACCCAATGGGGTTCTCTTATGATACCCGCTGCTTTGACTCCACTGTAACCGAAAAGGACATCAGGGTCGAGGAAGAGGTCTATCAGTGTTGTGACCTGGAGCCCGAAGCCCGCAAAGTCATCACCGCCCTCACAGATAGACTCTATGTGGGCGGCCCTATGCACAACAGCAAGGGAGACCTTTGTGGGTATCGGAGATGTCGCGCAACCGGCGTCTACACCACCAGCTTCGGGAACACGCTGACGTGCTATCTCAAAGCCACGGCCGCCATCAGGGCGGCGGCGCTGAGAGACTGCACTATGTTGGTTTGCGGTGATGACTTAGTCGTCATCGCTGAGAGCGACGGCGTAGAGGAGGACAACCGAGCCCTCCGAGCCTTCACGGAGGCTATGACGAGATACTCGGCTCCCCCAGGTGACGCTCCGCAGCCAGCATATGACCTGGAACTAATAACATCATGTTCATCCAACGTCTCAGTCGCGCACGACGTGACGGGTAAAAAGGTATATTACCTAACCCGAGACCCTGAAACTCCCTTGGCGCGAGCTGTATGGGAGACAGTCCGACACACTCCAGTCAATTCCTGGTTGGGAAACATCATAGTCTACGCTCCCACAATATGGGTGCGCATGATATTGATGACCCACTTTTTCTCAATACTCCAGAGCCAGGAAGCCCTTGAGAAAGCACTCGACTTCGATATGTACGGAGTCACCTACTCTATCACTCCGCTGGATTTACCGGCAATCATTCAAAGACTCCATGGCTTAAGCGCGTTCACGCTGCACGGATACTCTCCACACGAACTCAACCGGGTGGCCGGAGCCCTCAGAAAACTTGGGGTACCCCCGCTGAGAGCGTGGAGACATCGGGCCCGAGCAGTCCGCGCTAAGCTTATCGCCCAGGGAGGTAGAGCCAAAATATGTGGCATATACCTCTTTAACTGGGCGGTAAAAACCAAACTCAAACTCACTCCATTGCCTGCCGCTGCCAAACTCGATTTATCGGGTTGGTTTACGGTAGGCGCCGGCGGGGGAGACATTTATCACAGCATGTCTCATGCCCGACCCCGCTATTTACTCCTGTGCCTACTCATACTTACAGTAGGGGTAGGCATCTTCCTGCTGCCTGCTCGGTAGGCAGCTTAACACTCCGACCTTAGGGTCCCCTTTTTTTTTTTTTTTTTGG&quot;
+</code></pre><p>We load in our query sequences.</p>
+<pre><code class="lang-r">nucseq &lt;- readDNAStringSet(nucseq.fn)
+</code></pre>
+<p>Now we can perform pairwise alignment with the reference.</p>
+<pre><code class="lang-r">sm &lt;- nucleotideSubstitutionMatrix(match=<span class="hljs-number">1</span>,mismatch=<span class="hljs-number">0</span>,baseOnly=<span class="hljs-literal">FALSE</span>,type=<span class="hljs-string">&quot;DNA&quot;</span>)
+nucseq.pa &lt;- pairwiseAlignment(nucseq,subject,type=<span class="hljs-string">&quot;local&quot;</span>,substitutionMatrix=sm,gapOpening=<span class="hljs-number">1</span>,gapExtension=<span class="hljs-number">2</span>) %&gt;% aligned
+names(nucseq.pa) &lt;- names(nucseq)
+writeXStringSet(nucseq.pa,paste(nucseq.fn,<span class="hljs-string">&quot;.mapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+</code></pre>
+<p>If we map to a genome, we also get a nice side effect; the coverage across the genome of our sequences.</p>
+<p>This little function calculates the number of non-gaps in a vector of characters.</p>
+<pre><code class="lang-r">nongaps &lt;- <span class="hljs-keyword">function</span>(x){
+  sum(x!=<span class="hljs-string">&quot;-&quot;</span>)
+}
+</code></pre>
+<p>We convert the pairwise alignments into a matrix, and then work out the number of nongap characters in each column.</p>
+<pre><code class="lang-r">nucseq.pa.matrix &lt;- as.matrix(nucseq.pa)
+</code></pre>
+<pre><code>## Error in as.vector(data): no method for coercing this S4 class to a vector
+</code></pre><pre><code class="lang-r">nucseq.pa.coverage &lt;- apply(nucseq.pa.matrix,<span class="hljs-number">2</span>,nongaps)
+</code></pre>
+<pre><code>## Error in apply(nucseq.pa.matrix, 2, nongaps): object &apos;nucseq.pa.matrix&apos; not found
+</code></pre><pre><code class="lang-r">plot(nucseq.pa.coverage,type=<span class="hljs-string">&quot;s&quot;</span>,xlab=<span class="hljs-string">&quot;Position&quot;</span>,ylab=<span class="hljs-string">&quot;Coverage&quot;</span>)
+</code></pre>
+<pre><code>## Error in plot(nucseq.pa.coverage, type = &quot;s&quot;, xlab = &quot;Position&quot;, ylab = &quot;Coverage&quot;): error in evaluating the argument &apos;x&apos; in selecting a method for function &apos;plot&apos;: Error: object &apos;nucseq.pa.coverage&apos; not found
+</code></pre><p>I&apos;ll keep only columns with some non-gaps.</p>
+<pre><code class="lang-r">nucseq.pa.nongaps &lt;- nucseq.pa.matrix[,nucseq.pa.coverage&gt;<span class="hljs-number">0</span>]
+</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object &apos;nucseq.pa.matrix&apos; not found
+</code></pre><p>I write the matrix of nucleotides to a file.</p>
+<pre><code class="lang-r">output &lt;- paste(<span class="hljs-string">&quot;&gt;&quot;</span>,row.names(nucseq.pa.nongaps),<span class="hljs-string">&quot;\n&quot;</span>,apply(nucseq.pa.nongaps,<span class="hljs-number">1</span>,paste,collapse=<span class="hljs-string">&quot;&quot;</span>),sep=<span class="hljs-string">&quot;&quot;</span>)
+</code></pre>
+<pre><code>## Error in row.names(nucseq.pa.nongaps): object &apos;nucseq.pa.nongaps&apos; not found
+</code></pre><pre><code class="lang-r">write(output,file=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+</code></pre>
+<pre><code>## Error in cat(x, file = file, sep = c(rep.int(sep, ncolumns - 1), &quot;\n&quot;), : object &apos;output&apos; not found
+</code></pre><h2 id="reverse-alignment">Reverse alignment</h2>
+<p>Once we have an in-frame set of nucleotide sequences, we can repeat the same procedure as for the nucleotide sequences except:</p>
+<ul>
+<li>We translate our in-frame nucleotide sequences</li>
+<li>We align the translated amino acid sequences</li>
+<li>We map the nucleotide sequences back to the translated alignment</li>
+</ul>
+<pre><code class="lang-r">myseqs &lt;- read.fasta(paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+</code></pre>
+<pre><code>## Error in read.fasta(paste(nucseq.fn, &quot;.mapped.degapped&quot;, sep = &quot;&quot;)): no line starting with a &gt; character found
+</code></pre><pre><code class="lang-r">myaaseq &lt;- lapply(myseqs,translate)
+</code></pre>
+<pre><code>## Error in lapply(myseqs, translate): object &apos;myseqs&apos; not found
+</code></pre><pre><code class="lang-r">write.fasta(myaaseq,file.out=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),names=names(myaaseq))
+</code></pre>
+<pre><code>## Error in write.fasta(myaaseq, file.out = paste(nucseq.fn, &quot;.mapped.degapped.aa&quot;, : object &apos;myaaseq&apos; not found
+</code></pre><pre><code class="lang-r">aaseq &lt;- readAAStringSet(paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+aaseq
+</code></pre>
+<pre><code>##   A AAStringSet instance of length 0
+</code></pre><pre><code class="lang-r">aaseq.align &lt;- msa(aaseq,method=<span class="hljs-string">&quot;Muscle&quot;</span>)
+</code></pre>
+<pre><code>## Error in is(inputSeq, &quot;character&quot;): object &apos;aaseq&apos; not found
+</code></pre><pre><code class="lang-r">writeXStringSet(aaseq.align@unmasked,paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa.align&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+</code></pre>
+<pre><code>## Error in is(x, &quot;XStringSet&quot;): object &apos;aaseq.align&apos; not found
+</code></pre><p>Map the nucleotide MSA to the amino acid MSA.</p>
+<pre><code class="lang-r">reverse.align(paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa.align&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),out.file=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa.revalign&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+</code></pre>
+<pre><code>## Error in read.fasta(nucl.file, forceDNAtolower = forceDNAtolower): no line starting with a &gt; character found
+</code></pre><h2 id="using-codon-based-alignment">Using codon-based alignment</h2>
+<p>If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence.</p>
+<pre><code class="lang-r">cmd &lt;- sprintf(<span class="hljs-string">&quot;java -jar macse_v1.01b.jar -prog alignSequences -seq %s&quot;</span>,nucseq.fn)
+stdout &lt;- system(cmd, intern=<span class="hljs-literal">TRUE</span>)
+</code></pre>
 
                     
                     </section>
@@ -1074,10 +1217,10 @@
         </div>
 
         
-        <a href="../align/example2.html" class="navigation navigation-prev " aria-label="Previous page: Reverse alignment"><i class="fa fa-angle-left"></i></a>
+        <a href="../align/example1.html" class="navigation navigation-prev " aria-label="Previous page: Nucleotide alignment"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../distance/index.html" class="navigation navigation-next " aria-label="Next page: Distance-based analyses"><i class="fa fa-angle-right"></i></a>
+        <a href="../align/exercise1.html" class="navigation navigation-next " aria-label="Next page: Exercise"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
