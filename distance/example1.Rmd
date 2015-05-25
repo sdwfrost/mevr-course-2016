@@ -1,0 +1,67 @@
+# Distances walkthrough
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+First load the libraries you need.
+
+```{r load_library}
+library(ape)
+library(phangorn)
+library(network)
+```
+
+Load the multiple sequence alignment using ```read.dna``` from the ```ape``` library.
+
+```{r load_alignment}
+myalignment.filename <- "ray2000_pruned_degapped.fas"
+myalignment <- read.dna(myalignment.filename,format="fasta",as.matrix=TRUE)
+```
+
+Calculate distances using the TN93 model.
+
+```{r tn93}
+myalignment.dist.tn93 <- dist.dna(myalignment,model="TN93",as.matrix=TRUE)
+```
+
+Plot out the distances.
+
+```{r plot_distances}
+hist(myalignment.dist.tn93[lower.tri(myalignment.dist.tn93)],xlab="Distance",ylab="Frequency",main="",col="grey")
+```
+
+Calculate a neighbour joining tree.
+
+```{r nj}
+myalignment.tn93.nj <- nj(myalignment.dist.tn93)
+```
+
+Plot the tree out and add a scale bar.
+
+```{r plot_tree}
+plot(myalignment.tn93.nj,"unrooted",cex=0.5)
+add.scale.bar(length=0.1)
+```
+
+Bootstrap the alignment; we first define a function to make a tree from the alignment, then call ```boot.phylo```.
+
+```{r bootstrap}
+maketree <- function(x) nj(dist.dna(x,model="TN93"))
+myalignment.tn93.nj.boot <- boot.phylo(myalignment.tn93.nj,myalignment,maketree,B=100,block=3,trees=TRUE,quiet=FALSE,rooted=FALSE)
+```
+
+Now we can add the bootstrap supports to the tree.
+
+```{r plot_bootstrap}
+plotBS(myalignment.tn93.nj,myalignment.tn93.nj.boot$trees,type="phylogram",cex=0.5)
+```
+
+We can also create a network of 'similar' sequences, by defining a threshold distance.
+
+```{r plot_network}
+thresh <- 0.01
+myalignment.dist.tn93.net <- network(myalignment.dist.tn93<=thresh)
+plot(myalignment.dist.tn93.net)
+```
+

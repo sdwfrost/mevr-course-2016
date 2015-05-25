@@ -1,0 +1,75 @@
+# Root-to-tip exercise
+
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+
+```{r}
+library(ape)
+library(stringr)
+library(phangorn)
+source("chronos.R")
+```
+
+```{r}
+seq.fn <- "H5N1.fas"
+```
+
+```{r}
+stub <- strsplit(seq.fn,".",fixed=TRUE)[1]
+myseqs <- read.dna(seq.fn,format="fasta",as.matrix=FALSE)
+```
+
+ML tree.
+
+```{r}
+njtree  <- nj(dist.dna(myseqs,model="TN93"))
+myseqs.phydat <- as.phyDat(myseqs)
+myseqs.gtrig <- pml(njtree,myseqs.phydat,model="GTR+I+G",k=4)
+myseqs.gtrig <- optim.pml(myseqs.gtrig,optNni=TRUE,optBf=TRUE,optQ=TRUE,optInv=TRUE,optGamma=TRUE,optEdge=TRUE,optRate=FALSE)
+tr <- myseqs.gtrig$tree
+```
+
+```{r}
+tipnames <- tr$tip.label
+tipdates <- as.integer(str_sub(tipnames,-4))
+```
+
+```{r}
+tr.rtt <- rtt(tr,tipdates)
+tr.rtt$edge.length[tr.rtt$edge.length<0.00000001] <- 0.00000001
+tr.rtt.tipnames <- tr.rtt$tip.label
+tr.rtt.tipdates <- as.integer(str_sub(tr.rtt.tipnames,-4))
+```
+
+
+```{r}
+rootdistance <- distRoot(tr.rtt)
+pathlm <- lm(rootdistance~tr.rtt.tipdates)
+rate <- coef(pathlm)[2]
+rate
+tmrca <- unname(-coef(pathlm)[1]/coef(pathlm)[2])
+tmrca
+```
+
+```{r,eval=FALSE}
+max.time <- max(tipdates)
+ncat <- 1
+strict.clock.ctrl <- chronos.control(nb.rate.cat=as.integer(ncat))
+calibrating.values <- makeChronosCalib(tr)
+calibrating.values$age.min <- max.time - root.time
+calibrating.values$age.max <- max.time - root.time
+# pins the tips to sampling years
+calibrating.values <- rbind(calibrating.values,
+                            data.frame(node=seq(1,length(td)),
+                                       age.min=max.time - td,
+                                       age.max=max.time - td,
+                                       soft.bounds=FALSE))
+dated.tree <- RLchronos(tr, 
+                     lambda=1, 
+                     model=sub.rate.model, 
+                     calibration=calibrating.values,
+                     control=strict.clock.ctrl)
+```

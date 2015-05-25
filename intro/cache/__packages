@@ -1,0 +1,12 @@
+base
+Rgitbook
+XML
+magrittr
+BiocGenerics
+Biobase
+S4Vectors
+IRanges
+GenomeInfoDb
+AnnotationDbi
+annotate
+ape

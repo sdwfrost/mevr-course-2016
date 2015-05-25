@@ -1,0 +1,80 @@
+# Least squares dating exercise
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+```{r}
+library(ape)
+```
+
+For least squares dating, all we need is a tree, plus how long the sequences were used to construct the tree.
+
+```{r read_tree}
+stub <- "village_examl"
+seq.len <- 6987
+```
+
+```{r}
+tr.fn <- paste(stub,".tre",sep="")
+td.fn <- paste(stub,".td",sep="")
+tr <- read.tree(tr.fn)
+```
+
+The sample times are in the sequence names at the end.
+
+```{r}
+tipnames <- tr$tip.label
+tipdates <- tipnames %>% strsplit(.,"_",fixed=TRUE) %>% lapply(.,tail,1) %>% unlist %>% as.double
+```
+
+Now save the sequence names and tip dates to a file.
+
+```{r}
+write.table(rbind(c(length(tipnames),""),cbind(tipnames,tipdates)),td.fn,col.names=FALSE,row.names=FALSE,quote=FALSE)
+```
+
+Now run LSD.
+
+```{r}
+lsd.cmd <- sprintf("lsd -i %s -d %s -c -n 1 -r -b %s -s %s -v",tr.fn,td.fn,paste(10),seq.len)
+lsd <- system(lsd.cmd,intern=TRUE)
+```
+
+```{r}
+procresult <- function(fn){
+  result <- readLines(fn)
+  line <- result[grep("Tree 1 rate ",result)]
+  line.split <- strsplit(line, " ")[[1]]
+  list(rate=as.double(line.split[4]),tmrca=as.double(line.split[6]))
+}
+procresult(paste(stub,"_result.txt",sep=""))
+lsdtree <- read.tree(paste(stub,"_result_newick_date.txt",sep=""))
+```
+
+How close is the tree to the true tree?
+
+```{r}
+truetree <- read.tree("village_true.tre")
+treedist(lsdtree,truetree)
+```
+
+Compare pairwise distances.
+
+```{r}
+truetree.d <- cophenetic.phylo(truetree)
+truetree.ltri <- truetree.d[lower.tri(truetree.d)]
+lsdtree.d <- cophenetic.phylo(lsdtree)
+```
+
+```{r}
+ids <- row.names(truetree.d)
+idx <- match(ids,row.names(lsdtree.d))
+lsdtree.d2 <- lsdtree.d[idx,idx]
+lsdtree.d2.ltri <- lsdtree.d2[lower.tri(lsdtree.d2)]
+```
+
+```{r}
+summary(lm(lsdtree.d2.ltri~truetree.ltri))
+plot(lsdtree.d2.ltri~truetree.ltri)
+```

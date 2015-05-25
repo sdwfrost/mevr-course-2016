@@ -1,0 +1,93 @@
+# Theory
+
+## Introduction
+
+- Reconstructing a phylogeny is based on the concept of identity by descent
+- This means that we have to compare sites in one sequence with the homologous sites in another sequence
+- As we have several (or perhaps several thousand) sequences, we have to generate a *multiple sequence alignment*
+- In general, this is probably the hardest thing to do well in the entire phylogenetic workflow
+
+## General principle
+
+- The underlying principle of sequence alignment is to minimise differences between sequences
+    - Mutations
+    - Gaps
+- In order to find the 'best' alignment, we assign costs to introducing mutations or gaps into the alignment
+- Cost matrices are typically derived from curated alignments, usually not of viral sequences
+- Given an alignment (large, or lots of small alignments), we can calculate a substitution matrix from the data, from which we can derive a cost matrix, assuming a given level of divergence
+    - This approach gives better alignments than using the `wrong' cost matrix
+
+## Cost matrices
+
+- In order to find the `best' alignment, we specify costs associated with differences between sequences e.g.
+
+```
+ARNDCQEGHILKMFPSTWYVBZX
+ 4
+-1  5
+-2  0  6
+-2 -2  1  6
+ 0 -3 -3 -3  9
+-1  1  0  0 -3  5
+-1  0  0  2 -4  2  5
+ 0 -2  0 -1 -3 -2 -2  6
+-2  0  1 -1 -3  0  0 -2  8
+-1 -3 -3 -3 -1 -3 -3 -4 -3  4
+-1 -2 -3 -4 -1 -2 -3 -4 -3  2  4
+-1  2  0 -1 -3  1  1 -2 -1 -3 -2  5
+-1 -1 -2 -3 -1  0 -2 -3 -2  1  2 -1  5
+-2 -3 -3 -3 -2 -3 -3 -3 -1  0  0 -3  0  6
+-1 -2 -2 -1 -3 -1 -1 -2 -2 -3 -3 -1 -2 -4  7
+ 1 -1  1  0 -1  0  0  0 -1 -2 -2  0 -1 -2 -1  4
+ 0 -1  0 -1 -1 -1 -1 -2 -2 -1 -1 -1 -1 -2 -1  1  5
+-3 -3 -4 -4 -2 -2 -3 -2 -2 -3 -2 -3 -1  1 -4 -3 -2 11
+-2 -2 -2 -3 -2 -1 -2 -3  2 -1 -1 -2 -1  3 -3 -2 -2  2  7
+ 0 -3 -3 -3 -1 -2 -2 -3 -3  3  1 -2  1 -1 -2 -2  0 -3 -1  4
+-2 -1  3  4 -3  0  1 -1  0 -3 -4  0 -3 -3 -2  0 -1 -4 -3 -3  4
+-1  0  0  1 -3  3  4 -2  0 -3 -3  1 -1 -3 -1  0 -1 -3 -2 -2  1  4
+ 0 -1 -1 -1 -2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -2  0  0 -2 -1 -1 -1 -1 -1
+ ```
+ 
+## Where do these cost matrices come from?
+ 
+- Cost matrices are typically derived from curated alignments, usually not of viral sequences
+- Given an amino acid alignment (large, or lots of small alignments), we can calculate a substitution matrix from the data, from which we can derive a cost matrix, assuming a given level of divergence
+  - This approach gives better alignments than using the `wrong' cost matrix
+
+## Pairwise and multiple alignment
+
+- Given a cost matrix, and gap opening/extension penalties, it is possible to find the optimum alignment of a pair of sequences
+  - Pairwise alignment is particularly useful for helping to check reading frames, and to map partial sequences to regions in a genome
+- In practice, we almost always have more than two sequences
+  - Multiple sequence alignment involves heuristics to try to find the best alignment
+
+## Nucleotide, amino acid, or codon alignments?
+
+- In viruses, especially RNA viruses with relatively small genomes, most of the genome is coding, and there may be extensive genetic variation
+  - This makes it difficult to align nucleotide sequences}
+  - Sequence alignment programs are typically not optimised for closely related (but diverse) nucleotide sequences
+- Alternatively, we can align sequences in amino acid space
+  - 20 versus 4 characters make it easier to align
+  - We need to translate the sequences correctly
+  - We need to backtranslate the amino acid alignment
+- Codon-based alignments offer the best of both worlds for coding sequences
+  - 61 states
+  - Can fix frameshifts
+  - Relatively few programs have been developed for this, and they are very slow
+
+## Reverse alignment
+
+- A common approach used in viral sequence analysis is to align translated nucleotide sequences in amino acid space
+- This helps to keep coding sequences in frame
+- However, this requires all the nucleotide sequences to be already in frame
+
+## Strategies for finding the right frame
+
+- Count the number of stops, and choose the frame with zero stops
+- Find the longest open reading frame
+- Align against an in-frame reference
+
+## Graphical versus batch processing
+
+- It is extremely important to look at the alignment; every analysis downstream depends on having a good alignment
+- It is also important to avoid manually fixing sequence alignments, keeping a record of these changes if unavoidable

@@ -1,0 +1,119 @@
+# A simple walkthrough
+
+```{r Walkthrough, echo=FALSE, eval=FALSE}
+```
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+## Let's make a tree
+
+In order to help familiarise yourself with R and RStudio, we'll make a tree.
+
+## First steps
+
+- Open RStudio.
+- Change to the working directory where your files will be kept.
+    - Session > Set Working Directory > Choose Directory
+
+## Installing libraries
+
+We will use several libraries in this course, most of which have already been installed for you. However, it's good to know how to install them yourself.
+
+- Use the ```install.packages``` command.
+- Use Packages tab in the lower left hand panel.
+
+![RStudio](img/rstudio.png)
+
+## Loading libraries
+
+Most libraries are not loaded by default, so you'll need to load them yourself. Try the following command
+
+```{r load_library}
+library(ape)
+```
+
+## Sequence data
+
+Most of the time, we will use FASTA formatted sequence data.
+
+```
+>SequenceName
+CTCTTGGCTCTGTTGTCCTGTTTGACCATCCCAGCTTCCGCTTATGAAG
+CATGTCACAAACGACTGCTCCAACTCGAGCATTGTCTATGAGGCAGCGG
+TGCGTGCCCTGTGTTCGGGAGGGCAACACCTCCCGCTGCTGGGTATCGC
+AACTCCAGTGTCCCCACCACGACGATACGGCGCCATGTCGATTTGCTCG
+GCCATGTACGTGGGGGATCTCTGCGGATCTGTTTTCCTCGTCTCCCAAC
+TATCAGACGGTACAGGACTGCAATTGTTCAATCTATCCTGGCCACGTAA
+```
+
+## Reading in sequence data
+
+- A dataset we will use throughout is of partial hepatitis C sequences of the Core/E1 region, sampled from Egypt `r citep(bib["Ray2000"])`.
+
+```{r read_ray2000_data}
+myseqs <- read.dna("ray2000.fas",format="fasta",as.matrix=TRUE)
+```
+
+- R uses ```<-``` to assign to names
+- The function in R to read in DNA sequences is ```read.dna```
+- We can learn more about this function by typing ```?read.dna```
+- If we can't remember the name, we could search for matches e.g. ```??dna```
+- The help tells us that we have to specify the format, as well as whether to read the data into a matrix
+- These sequences are aligned, so we set ```use.matrix=TRUE```
+
+## What happened?
+
+Nothing happened! This is because nothing went wrong. If we want to see the data, we can just type in the name we gave it.
+
+```{r display_myseqs}
+myseqs
+```
+
+## Displaying the alignment
+
+```{r display_alignment}
+image(myseqs)
+```
+
+## Displaying part of an alignment
+
+```{r display_subalignment}
+image(myseqs[1:10,100:200])
+```
+
+## Generating a distance matrix
+
+- Several algorithmic approaches for obtaining genetic distances
+- The command below generates a distance matrix using the Tamura-Nei (1993) distance
+
+```{r generate_distance}
+myseqs.dist <- dist.dna(myseqs,model="TN93")
+```
+
+## Reconstructing a neighbour joining tree
+
+- The ```nj``` command generates a neighbour joining tree from a distance matrix.
+
+```{r nj}
+myseqs.njtree <- nj(myseqs.dist)
+myseqs.njtree
+```
+
+## Plotting a tree
+
+```{r plot_unrooted}
+plot(myseqs.njtree,type="unrooted",cex=0.5)
+```
+
+## Questions and concerns: implementation
+
+- 'I can't remember all that typing'...
+- 'I can make a tree more easily using a graphical interface, such as in MEGA'...
+
+## Literate programming
+
+- R and RStudio have good support for *literate programming*
+    - Mixture of text and code
+- Rather than type everything from scratch, we place all commands in a text file

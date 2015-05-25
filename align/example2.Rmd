@@ -1,0 +1,158 @@
+## Align in protein space
+
+Alignment in protein space is potentially more accurate (although not always), but to do so reliably is not straightforward. This makes this section more appropriate for advanced users, who want to automate alignment of potentially difficult sequence datasets.
+
+### Loading libraries
+
+```{r}
+library(Biostrings)
+library(seqinr)
+source("utils.R")
+```
+
+## Getting a good translation
+
+First, we have to translate the sequences into amino acids. We can't assume that the sequences are in frame 1, so we have to find the correct frame for each.
+
+### Identifying the right frame by counting stops
+
+The simplest way is to count the number of stop codons in each reading frame.
+
+```{r}
+nucseq.fn <- "ray2000_edited.fas"
+nucseq <- read.fasta(nucseq.fn)
+```
+
+In ```utils.R```, there is a function that counts the number of stop codons in each frame.
+
+
+```{r}
+numstops <- lapply(nucseq,countstops)
+```
+
+However, when we look at the results, we can see that there is one sequence where there are two frames with no stop codons.
+
+```{r}
+lapply(numstops,paste,collapse=" ") %>% unlist %>% unname %>% table %>% as.data.frame.table
+```
+
+### Finding open reading frames
+
+Another approach involves finding the longest open reading frame.
+
+```{r}
+nucseq.fn <- "ray2000_edited.fas"
+nucseq.orf.fn <- "ray2000_edited.fas.orf"
+```
+
+Finding the longest open reading frame greater than a minimum size (say 400 bases) is possible in R, but I have yet to find a solution that is as fast as using an external program. We will use ```getorf``` from the EMBOSS software suite.
+
+```{r}
+cmd <- sprintf("getorf -sequence %s -outseq %s -find 2 -minsize 405",nucseq.fn,nucseq.orf.fn)
+system(cmd)
+```
+
+Here we can see that we now have one less sequence than before.
+
+```{r}
+nucseq.orf <- read.fasta(nucseq.orf.fn)
+length(nucseq.orf)
+```
+
+### Align to a reference sequence
+
+Another approach is to map to a reference sequence that is in frame. We load in a reference sequence.
+
+```{r}
+subject <- read.fasta("hcv4.fas")[[1]] %>%
+  as.character %>%
+  toupper %>%
+  c2s
+subject
+```
+
+We load in our query sequences.
+
+```{r}
+nucseq <- readDNAStringSet(nucseq.fn)
+```
+
+Now we can perform pairwise alignment with the reference.
+
+```{r}
+sm <- nucleotideSubstitutionMatrix(match=1,mismatch=0,baseOnly=FALSE,type="DNA")
+nucseq.pa <- pairwiseAlignment(nucseq,subject,type="local",substitutionMatrix=sm,gapOpening=1,gapExtension=2) %>% aligned
+names(nucseq.pa) <- names(nucseq)
+writeXStringSet(nucseq.pa,paste(nucseq.fn,".mapped",sep=""))
+```
+
+If we map to a genome, we also get a nice side effect; the coverage across the genome of our sequences.
+
+This little function calculates the number of non-gaps in a vector of characters.
+
+```{r}
+nongaps <- function(x){
+  sum(x!="-")
+}
+```
+
+We convert the pairwise alignments into a matrix, and then work out the number of nongap characters in each column.
+
+```{r}
+nucseq.pa.matrix <- as.matrix(nucseq.pa)
+nucseq.pa.coverage <- apply(nucseq.pa.matrix,2,nongaps)
+plot(nucseq.pa.coverage,type="s",xlab="Position",ylab="Coverage")
+```
+
+I'll keep only columns with some non-gaps.
+
+```{r}
+nucseq.pa.nongaps <- nucseq.pa.matrix[,nucseq.pa.coverage>0]
+```
+
+I write the matrix of nucleotides to a file.
+
+```{r}
+output <- paste(">",row.names(nucseq.pa.nongaps),"\n",apply(nucseq.pa.nongaps,1,paste,collapse=""),sep="")
+write(output,file=paste(nucseq.fn,".mapped.degapped",sep=""))
+```
+
+## Reverse alignment
+
+Once we have an in-frame set of nucleotide sequences, we can repeat the same procedure as for the nucleotide sequences except:
+  - We translate our in-frame nucleotide sequences
+  - We align the translated amino acid sequences
+  - We map the nucleotide sequences back to the translated alignment
+  
+
+```{r}
+myseqs <- read.fasta(paste(nucseq.fn,".mapped.degapped",sep=""))
+myaaseq <- lapply(myseqs,translate)
+write.fasta(myaaseq,file.out=paste(nucseq.fn,".mapped.degapped.aa",sep=""),names=names(myaaseq))
+```
+
+```{r}
+aaseq <- readAAStringSet(paste(nucseq.fn,".mapped.degapped.aa",sep=""))
+aaseq
+```
+
+```{r}
+aaseq.align <- msa(aaseq,method="Muscle")
+writeXStringSet(aaseq.align@unmasked,paste(nucseq.fn,".mapped.degapped.aa.align",sep=""))
+```
+
+Map the nucleotide MSA to the amino acid MSA.
+
+```{r}
+reverse.align(paste(nucseq.fn,".mapped.degapped",sep=""),paste(nucseq.fn,".mapped.degapped.aa.align",sep=""),out.file=paste(nucseq.fn,".mapped.degapped.aa.revalign",sep=""))
+```
+
+
+## Using codon-based alignment
+
+If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence.
+
+```{r,eval=FALSE}
+cmd <- sprintf("java -jar macse_v1.01b.jar -prog alignSequences -seq %s",nucseq.fn)
+stdout <- system(cmd)
+```

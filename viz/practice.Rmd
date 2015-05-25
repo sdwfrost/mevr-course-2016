@@ -1,0 +1,85 @@
+# Practice
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+## Load libraries
+
+```{r}
+library(ape)
+library(ggtree)
+```
+
+## Read in tree
+
+```read.tree``` is used to read in a Newick formatted tree.
+
+```{r}
+tr <- read.tree("mers_subtree.tre")
+tr
+```
+
+Let's look closer at the tree object.
+
+```{r}
+names(tr)
+```
+
+```{r}
+tr$edge
+```
+
+```{r}
+tr$Nnode
+```
+
+```{r}
+tr$tip.label
+```
+
+```{r}
+tr$edge.length
+```
+
+```{r}
+tr$node.label
+```
+
+
+## Extract annotations
+
+```{r}
+host <- tr$tip.label %>% strsplit(.,"_") %>% lapply(.,"[",2) %>% unlist
+dd <- data.frame(taxa=tr$tip.label,host=host)
+```
+
+## Plot using ape
+
+The plotting function in ```ape``` only requires a single argument, the tree.
+
+```{r}
+plot(tr)
+```
+
+```{r}
+plot(tr)
+add.scale.bar()
+```
+
+## Generate ggtree and add annotations
+
+```{r}
+g <- ggtree(tr,right=TRUE,time_scale=TRUE) %<+% dd
+```
+
+## Plot tree
+
+```{r}
+g+
+  theme_tree2()+ # time scale
+  geom_point(subset=.(isTip),aes(shape=host,color=host),size=4)+ # tip symbols
+  geom_text(aes(color=host,label=host),hjust=-0.1)+ # tip labels
+  xlim(0,1.2)+ # x scale
+  xlab("Time") # x label
+```

@@ -1,0 +1,103 @@
+# Practice
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+```{r}
+library(ape)
+library(stepwise)
+library(magrittr)
+library(kdetrees)
+library(phangorn)
+library(bios2mds)
+source("recombination.R")
+```
+
+## Set filename
+
+```{r}
+seqfilename <- "CRF7.fas"
+outgroup <- ""
+```
+
+## Read fasta file
+
+```{r}
+seqdata <- read.dna(seqfilename,format="fasta",as.matrix=TRUE)
+seqdata
+```
+
+```{r}
+seqdata.stepwise <- seqdata
+row.names(seqdata.stepwise) <- makeLabel(row.names(seqdata),len=9)
+write.dna(seqdata.stepwise,file=paste(seqfilename,".stepwise",sep=""),format="interleaved",colsep="",nbcol=-1)
+```
+
+# Maxchi
+
+```{r}
+seqdata.maxchi <- maxchi(paste(seqfilename,".stepwise",sep=""),breaks=seg.sites(seqdata),winHalfWidth=50,permReps=100)
+summary(seqdata.maxchi)
+```
+
+# Phylpro
+
+```{r}
+seqdata.phylpro <- phylpro(paste(seqfilename,".stepwise",sep=""),breaks=seg.sites(seqdata),winHalfWidth=500,permReps=100)
+summary(seqdata.phylpro)
+```
+
+# Make a quick tree
+
+```{r}
+dist.dna(seqdata,"TN93") %>% # Make distance matrix
+  nj %>% # Neighbour joining
+  root(.,outgroup=outgroup) %>% # Root with outgroup
+  plot # Plot tree
+```
+
+# Make list of alignments.
+
+```{r}
+seqdata.slide <- slidingWindowAlignment(seqdata,300,10)
+length(seqdata.slide)
+```
+
+```{r}
+seqdata.slide.nj <- lapply(seqdata.slide,dist.dna,model="TN93",as.matrix=TRUE) %>%
+  lapply(.,njs)
+```
+
+## Outlier detection
+
+```{r}
+seqdata.slide.nj.kde <- kdetrees(seqdata.slide.nj,outgroup="III1_EU360814")
+```
+
+```{r}
+plot(seqdata.slide.nj.kde)
+```
+
+```{r}
+hist(seqdata.slide.nj.kde)
+```
+
+## Distances between trees
+
+```{r}
+seqdata.slide.treedist <- disttree(seqdata.slide.nj)
+```
+
+```{r}
+seqdata.slide.treemds <- mmds(seqdata.slide.treedist[[1]],pc=2)
+mmds.2D.plot(seqdata.slide.treemds)
+```
+
+```{r}
+seqdata.sbt <- sbtest(seqdata,300,"TN93")
+```
+
+```{r}
+plot(symdiff~breakpoint,data=seqdata.sbt,type="s")
+```

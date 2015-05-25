@@ -1,0 +1,71 @@
+# 'Mugration' exercise
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+Load the libraries.
+
+```{r load_libraries} 
+library(ape)
+library(phangorn)
+library(ggtree)
+```
+
+Load the FASTA data.
+
+```{r load_data} 
+myseqs <- read.dna("H5N1.fas",format="fasta")
+```
+
+```{r nj}
+mytree  <- nj(dist.dna(myseqs,model="TN93"))
+```
+
+Starting with the neighbour joining tree, we reconstruct a maximum likelihood tree, as we did before. Note that we get a warning about negative branch lengths in the NJ tree, which aren't allowed in the ML tree.
+
+```{r ml} 
+myseqs.phydat <- as.phyDat(myseqs)
+myseqs.gtrig <- pml(mytree,myseqs.phydat,model="GTR+I+G",k=4)
+myseqs.gtrig <- optim.pml(myseqs.gtrig,optNni=TRUE,optBf=TRUE,optQ=TRUE,optInv=TRUE,optGamma=TRUE,optEdge=TRUE,optRate=FALSE)
+myseqs.mltree <- myseqs.gtrig$tree
+```
+
+We need to root the tree in order to do ancestral reconstruction. We use ```rtt```, but in principle, we could use any method we discussed before. We scan the names of the tip labels, to get the tip dates and location.
+
+```{r parse_tiplabels}
+info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(myseqs.mltree$tip.label,collapse="\n"),quiet=TRUE)
+tipdates <- as.double(info[[5]])
+tipdates
+```
+
+Now we can root with ```rtt```.
+
+```{r}
+myseqs.mltree.rooted <- rtt(myseqs.mltree,tipdates)
+```
+
+Now we can extract the location, and reconstruct the changes in state.
+
+```{r}
+info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(myseqs.mltree.rooted$tip.label,collapse="\n"),quiet=TRUE)
+mylocation <- as.factor(info[[3]])
+mylocation
+```
+
+
+```{r }
+myseqs.mltree.rooted$edge.length[myseqs.mltree.rooted$edge.length<0.00000001] <- 0.00000001
+myseqs.ace <- ace(mylocation,myseqs.mltree.rooted,type="discrete",method="ML",model="ER")
+```
+
+```{r } 
+myseqs.ace
+```
+
+```{r } 
+plot(myseqs.mltree.rooted, type="p",label.offset=0.0025,cex=0.75)
+co <- c("blue", "yellow","red","green","orange")
+tiplabels(pch = 22, bg = co[as.numeric(mylocation)], cex = 1.0)
+nodelabels(thermo = myseqs.ace$lik.anc, piecol = co, cex = 0.25)
+```
