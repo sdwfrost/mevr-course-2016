@@ -5,7 +5,7 @@
         <!-- head:start -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Clustering exercise | </title>
+        <title>Exercise | </title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -23,7 +23,7 @@
     <link rel="next" href="../ml/index.html" />
     
     
-    <link rel="prev" href="../distance/practice.html" />
+    <link rel="prev" href="../distance/example1.html" />
     
 
         <!-- head:end -->
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="4.2.1" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
+    <div class="book" data-level="4.2.2" data-basepath=".." data-revision="Mon May 25 2015 08:19:46 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -202,13 +202,28 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2.2" data-path="getseq/exercises.html">
+        <li class="chapter " data-level="2.2.2" data-path="getseq/example2.html">
+            
+                
+                    <a href="../getseq/example2.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.2.</b>
+                        
+                        Retrieving annotations example
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="getseq/exercises.html">
             
                 
                     <a href="../getseq/exercises.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>2.2.2.</b>
+                            <b>2.2.3.</b>
                         
                         Exercises
                     </a>
@@ -376,15 +391,30 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="4.2.1" data-path="distance/exercise1.html">
+        <li class="chapter " data-level="4.2.1" data-path="distance/example1.html">
+            
+                
+                    <a href="../distance/example1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.1.</b>
+                        
+                        Neighbour joining example
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.2.2" data-path="distance/exercise1.html">
             
                 
                     <a href="../distance/exercise1.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>4.2.1.</b>
+                            <b>4.2.2.</b>
                         
-                        Clustering exercise
+                        Exercise
                     </a>
                 
             
@@ -1063,260 +1093,7 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="distances-exercise">Distances exercise</h1>
-<p>First load the libraries you need.</p>
-<pre><code class="lang-r"><span class="hljs-keyword">library</span>(ape)
-<span class="hljs-keyword">library</span>(phangorn)
-<span class="hljs-keyword">library</span>(network)
-</code></pre>
-<pre><code>## network: Classes for Relational Data
-## Version 1.12.0 created on 2015-03-04.
-## copyright (c) 2005, Carter T. Butts, University of California-Irvine
-##                     Mark S. Handcock, University of California -- Los Angeles
-##                     David R. Hunter, Penn State University
-##                     Martina Morris, University of Washington
-##                     Skye Bender-deMoll, University of Washington
-##  For citation information, type citation(&quot;network&quot;).
-##  Type help(&quot;network-package&quot;) to get started.
-</code></pre><p>Load the multiple sequence alignment using <code>read.dna</code> from the <code>ape</code> library.</p>
-<pre><code class="lang-r">myalignment.filename &lt;- <span class="hljs-string">&quot;ray2000_pruned_degapped.fas&quot;</span>
-myalignment &lt;- read.dna(myalignment.filename,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
-</code></pre>
-<p>Calculate distances using the <a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a> model.</p>
-<pre><code class="lang-r">myalignment.dist.tn93 &lt;- dist.dna(myalignment,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
-</code></pre>
-<p>Plot out the distances.</p>
-<pre><code class="lang-r">hist(myalignment.dist.tn93[lower.tri(myalignment.dist.tn93)],xlab=<span class="hljs-string">&quot;Distance&quot;</span>,ylab=<span class="hljs-string">&quot;Frequency&quot;</span>,main=<span class="hljs-string">&quot;&quot;</span>,col=<span class="hljs-string">&quot;grey&quot;</span>)
-</code></pre>
-<p><figure><img src="figure/plot_distances-1.png" alt="plot of chunk plot_distances"><figcaption>Figure: plot of chunk plot_distances</figcaption></figure> </p>
-<p>Calculate a neighbour joining tree.</p>
-<pre><code class="lang-r">myalignment.tn93.nj &lt;- nj(myalignment.dist.tn93)
-</code></pre>
-<p>Plot the tree out and add a scale bar.</p>
-<pre><code class="lang-r">plot(myalignment.tn93.nj,<span class="hljs-string">&quot;unrooted&quot;</span>,cex=<span class="hljs-number">0.5</span>)
-add.scale.bar(length=<span class="hljs-number">0.1</span>)
-</code></pre>
-<p><figure><img src="figure/plot_tree-1.png" alt="plot of chunk plot_tree"><figcaption>Figure: plot of chunk plot_tree</figcaption></figure> </p>
-<p>Bootstrap the alignment; we first define a function to make a tree from the alignment, then call <code>boot.phylo</code>.</p>
-<pre><code class="lang-r">maketree &lt;- <span class="hljs-keyword">function</span>(x) nj(dist.dna(x,model=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a>&quot;</span>))
-myalignment.tn93.nj.boot &lt;- boot.phylo(myalignment.tn93.nj,myalignment,maketree,B=<span class="hljs-number">100</span>,block=<span class="hljs-number">3</span>,trees=<span class="hljs-literal">TRUE</span>,quiet=<span class="hljs-literal">FALSE</span>,rooted=<span class="hljs-literal">FALSE</span>)
-</code></pre>
-<pre><code>## 
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |=                                                                |   1%
-  |                                                                       
-  |=                                                                |   2%
-  |                                                                       
-  |==                                                               |   3%
-  |                                                                       
-  |===                                                              |   4%
-  |                                                                       
-  |===                                                              |   5%
-  |                                                                       
-  |====                                                             |   6%
-  |                                                                       
-  |=====                                                            |   7%
-  |                                                                       
-  |=====                                                            |   8%
-  |                                                                       
-  |======                                                           |   9%
-  |                                                                       
-  |======                                                           |  10%
-  |                                                                       
-  |=======                                                          |  11%
-  |                                                                       
-  |========                                                         |  12%
-  |                                                                       
-  |========                                                         |  13%
-  |                                                                       
-  |=========                                                        |  14%
-  |                                                                       
-  |==========                                                       |  15%
-  |                                                                       
-  |==========                                                       |  16%
-  |                                                                       
-  |===========                                                      |  17%
-  |                                                                       
-  |============                                                     |  18%
-  |                                                                       
-  |============                                                     |  19%
-  |                                                                       
-  |=============                                                    |  20%
-  |                                                                       
-  |==============                                                   |  21%
-  |                                                                       
-  |==============                                                   |  22%
-  |                                                                       
-  |===============                                                  |  23%
-  |                                                                       
-  |================                                                 |  24%
-  |                                                                       
-  |================                                                 |  25%
-  |                                                                       
-  |=================                                                |  26%
-  |                                                                       
-  |==================                                               |  27%
-  |                                                                       
-  |==================                                               |  28%
-  |                                                                       
-  |===================                                              |  29%
-  |                                                                       
-  |====================                                             |  30%
-  |                                                                       
-  |====================                                             |  31%
-  |                                                                       
-  |=====================                                            |  32%
-  |                                                                       
-  |=====================                                            |  33%
-  |                                                                       
-  |======================                                           |  34%
-  |                                                                       
-  |=======================                                          |  35%
-  |                                                                       
-  |=======================                                          |  36%
-  |                                                                       
-  |========================                                         |  37%
-  |                                                                       
-  |=========================                                        |  38%
-  |                                                                       
-  |=========================                                        |  39%
-  |                                                                       
-  |==========================                                       |  40%
-  |                                                                       
-  |===========================                                      |  41%
-  |                                                                       
-  |===========================                                      |  42%
-  |                                                                       
-  |============================                                     |  43%
-  |                                                                       
-  |=============================                                    |  44%
-  |                                                                       
-  |=============================                                    |  45%
-  |                                                                       
-  |==============================                                   |  46%
-  |                                                                       
-  |===============================                                  |  47%
-  |                                                                       
-  |===============================                                  |  48%
-  |                                                                       
-  |================================                                 |  49%
-  |                                                                       
-  |================================                                 |  50%
-  |                                                                       
-  |=================================                                |  51%
-  |                                                                       
-  |==================================                               |  52%
-  |                                                                       
-  |==================================                               |  53%
-  |                                                                       
-  |===================================                              |  54%
-  |                                                                       
-  |====================================                             |  55%
-  |                                                                       
-  |====================================                             |  56%
-  |                                                                       
-  |=====================================                            |  57%
-  |                                                                       
-  |======================================                           |  58%
-  |                                                                       
-  |======================================                           |  59%
-  |                                                                       
-  |=======================================                          |  60%
-  |                                                                       
-  |========================================                         |  61%
-  |                                                                       
-  |========================================                         |  62%
-  |                                                                       
-  |=========================================                        |  63%
-  |                                                                       
-  |==========================================                       |  64%
-  |                                                                       
-  |==========================================                       |  65%
-  |                                                                       
-  |===========================================                      |  66%
-  |                                                                       
-  |============================================                     |  67%
-  |                                                                       
-  |============================================                     |  68%
-  |                                                                       
-  |=============================================                    |  69%
-  |                                                                       
-  |==============================================                   |  70%
-  |                                                                       
-  |==============================================                   |  71%
-  |                                                                       
-  |===============================================                  |  72%
-  |                                                                       
-  |===============================================                  |  73%
-  |                                                                       
-  |================================================                 |  74%
-  |                                                                       
-  |=================================================                |  75%
-  |                                                                       
-  |=================================================                |  76%
-  |                                                                       
-  |==================================================               |  77%
-  |                                                                       
-  |===================================================              |  78%
-  |                                                                       
-  |===================================================              |  79%
-  |                                                                       
-  |====================================================             |  80%
-  |                                                                       
-  |=====================================================            |  81%
-  |                                                                       
-  |=====================================================            |  82%
-  |                                                                       
-  |======================================================           |  83%
-  |                                                                       
-  |=======================================================          |  84%
-  |                                                                       
-  |=======================================================          |  85%
-  |                                                                       
-  |========================================================         |  86%
-  |                                                                       
-  |=========================================================        |  87%
-  |                                                                       
-  |=========================================================        |  88%
-  |                                                                       
-  |==========================================================       |  89%
-  |                                                                       
-  |==========================================================       |  90%
-  |                                                                       
-  |===========================================================      |  91%
-  |                                                                       
-  |============================================================     |  92%
-  |                                                                       
-  |============================================================     |  93%
-  |                                                                       
-  |=============================================================    |  94%
-  |                                                                       
-  |==============================================================   |  95%
-  |                                                                       
-  |==============================================================   |  96%
-  |                                                                       
-  |===============================================================  |  97%
-  |                                                                       
-  |================================================================ |  98%
-  |                                                                       
-  |================================================================ |  99%
-  |                                                                       
-  |=================================================================| 100%
-## Calculating bootstrap values... done.
-</code></pre><p>Now we can add the bootstrap supports to the tree.</p>
-<pre><code class="lang-r">plotBS(myalignment.tn93.nj,myalignment.tn93.nj.boot$trees,type=<span class="hljs-string">&quot;phylogram&quot;</span>,cex=<span class="hljs-number">0.5</span>)
-</code></pre>
-<p><figure><img src="figure/plot_bootstrap-1.png" alt="plot of chunk plot_bootstrap"><figcaption>Figure: plot of chunk plot_bootstrap</figcaption></figure> </p>
-<p>We can also create a network of &apos;similar&apos; sequences, by defining a threshold distance.</p>
-<pre><code class="lang-r">thresh &lt;- <span class="hljs-number">0.01</span>
-myalignment.dist.tn93.net &lt;- network(myalignment.dist.tn93&lt;=thresh)
-plot(myalignment.dist.tn93.net)
-</code></pre>
-<p><figure><img src="figure/plot_network-1.png" alt="plot of chunk plot_network"><figcaption>Figure: plot of chunk plot_network</figcaption></figure> </p>
-<p>\end{document}</p>
-
+                        
                     
                     </section>
                 
@@ -1326,7 +1103,7 @@ plot(myalignment.dist.tn93.net)
         </div>
 
         
-        <a href="../distance/practice.html" class="navigation navigation-prev " aria-label="Previous page: Practice"><i class="fa fa-angle-left"></i></a>
+        <a href="../distance/example1.html" class="navigation navigation-prev " aria-label="Previous page: Neighbour joining example"><i class="fa fa-angle-left"></i></a>
         
         
         <a href="../ml/index.html" class="navigation navigation-next " aria-label="Next page: Maximum likelihood based analyses"><i class="fa fa-angle-right"></i></a>

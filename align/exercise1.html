@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2.3" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
+    <div class="book" data-level="3.2.3" data-basepath=".." data-revision="Mon May 25 2015 08:19:46 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -202,13 +202,28 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2.2" data-path="getseq/exercises.html">
+        <li class="chapter " data-level="2.2.2" data-path="getseq/example2.html">
+            
+                
+                    <a href="../getseq/example2.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.2.</b>
+                        
+                        Retrieving annotations example
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="getseq/exercises.html">
             
                 
                     <a href="../getseq/exercises.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>2.2.2.</b>
+                            <b>2.2.3.</b>
                         
                         Exercises
                     </a>
@@ -376,15 +391,30 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="4.2.1" data-path="distance/exercise1.html">
+        <li class="chapter " data-level="4.2.1" data-path="distance/example1.html">
+            
+                
+                    <a href="../distance/example1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.1.</b>
+                        
+                        Neighbour joining example
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="distance/exercise1.html">
             
                 
                     <a href="../distance/exercise1.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>4.2.1.</b>
+                            <b>4.2.2.</b>
                         
-                        Clustering exercise
+                        Exercise
                     </a>
                 
             
@@ -1064,6 +1094,62 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="alignment-exercise">Alignment exercise</h1>
+<p>The aim of this objective is to illustrate the potential difficulties in aligning highly variable sequences, such as those from RNA viruses. I have provided two simulated sequence datasets generated using the program INDELible (Fletcher and Yang, 2009), for which the true alignment is known.</p>
+<ol>
+<li><code>denv.fas</code>: simulated dengue virus sequences</li>
+<li><code>influenza_HA.fas</code>: simulated influenza A haemagglutinin sequences</li>
+</ol>
+<p>Align these as best you can, and then we will compare your answers to the true alignment. For your convenience, I have also provided translated sequences.</p>
+<p>You may use the following commands in R (or any other alignment program you like). Using e.g. <code>?msa</code> to get more information on each command.</p>
+<ul>
+<li><code>msa</code> from the library <code>msa</code></li>
+<li><code>mafft</code> from the library <code>ips</code></li>
+<li><code>prank</code> from the library <code>ips</code></li>
+<li><code>clustal</code> (using either <code>clustalw</code> or Clustal-Omega) from the library <code>ape</code></li>
+<li><code>t_coffee</code> from the library <code>ape</code></li>
+</ul>
+<p>Examples of how to use these commands for nucleotide sequences are given below.</p>
+<h2 id="nucleotide-alignment">Nucleotide alignment</h2>
+<h3 id="-mafft-and-prank"><code>mafft</code> and <code>prank</code></h3>
+<p>MAFFT is one of the fastest multiple sequence alignment programs available, and can be used for thousands of sequences.</p>
+<pre><code class="lang-r"><span class="hljs-keyword">library</span>(ips)
+myseqs &lt;- read.fas(<span class="hljs-string">&quot;denv.fas&quot;</span>)
+myseqs.align.mafft &lt;- mafft(myseqs,path=<span class="hljs-string">&quot;/usr/bin/mafft&quot;</span>)
+write.fas(myseqs.align.mafft,<span class="hljs-string">&quot;denv.fas.mafft&quot;</span>)
+</code></pre>
+<p>Be warned, PRANK can take a long time...</p>
+<pre><code class="lang-r">prank(myseqs,<span class="hljs-string">&quot;denv.fas.prank&quot;</span>,path=<span class="hljs-string">&quot;/usr/local/bin/prank&quot;</span>)
+</code></pre>
+<h3 id="-clustalw-and-clustalo"><code>clustalw</code> and <code>clustalo</code></h3>
+<pre><code class="lang-r"><span class="hljs-keyword">library</span>(ape)
+myseqs.clustalw &lt;- clustal(myseqs,exec=<span class="hljs-string">&quot;/usr/bin/clustalw&quot;</span>)
+write.fas(myseqs.clustalw,<span class="hljs-string">&quot;denv.fas.clustalw&quot;</span>)
+</code></pre>
+<p>The <code>clustal</code> command in <code>ape`` will also work for Clustal Omega (</code>clustalo```).</p>
+<pre><code class="lang-r">myseqs.clustalo &lt;- clustal(myseqs,exec=<span class="hljs-string">&quot;/usr/bin/clustalo&quot;</span>)
+write.fas(myseqs.clustalo,<span class="hljs-string">&quot;denv.fas.clustalo&quot;</span>)
+</code></pre>
+<pre><code class="lang-r">myseqs.tcoffee &lt;- tcoffee(myseqs)
+write.fas(myseqs.tcoffee,<span class="hljs-string">&quot;denv.fas.tcoffee&quot;</span>)
+</code></pre>
+<h2 id="amino-acid-alignment">Amino acid alignment</h2>
+<p>Try aligning in amino acid space too. Unfortunately, R does not have good support for amino acid sequences, so this is best done using system calls (which you can obviously also use for the nucleotide sequences too).</p>
+<h3 id="-mafft"><code>mafft</code></h3>
+<pre><code class="lang-r">cmd &lt;- <span class="hljs-string">&quot;mafft denv.fas.aa &gt; denv.fas.aa.mafft&quot;</span>
+system(cmd)
+</code></pre>
+<h3 id="-muscle"><code>muscle</code></h3>
+<pre><code class="lang-r">cmd &lt;- <span class="hljs-string">&quot;muscle -in denv.fas.aa -out denv.fas.aa.muscle&quot;</span>
+system(cmd)
+</code></pre>
+<h3 id="clustal-omega">Clustal Omega</h3>
+<pre><code class="lang-r">cmd &lt;- <span class="hljs-string">&quot;clustalo -i denv.fas.aa -o denv.fas.aa.clustalo&quot;</span>
+system(cmd)
+</code></pre>
+<h3 id="prank">PRANK</h3>
+<pre><code class="lang-r">cmd &lt;- <span class="hljs-string">&quot;prank -d=denv.fas.aa -o=denv.fas.aa.prank&quot;</span>
+system(cmd)
+</code></pre>
 
                     
                     </section>

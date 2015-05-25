@@ -20,7 +20,7 @@
         
     
     
-    <link rel="next" href="../getseq/exercises.html" />
+    <link rel="next" href="../getseq/example2.html" />
     
     
     <link rel="prev" href="../getseq/practice.html" />
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="2.2.1" data-basepath=".." data-revision="Sun May 24 2015 18:21:44 GMT+0100 (BST)">
+    <div class="book" data-level="2.2.1" data-basepath=".." data-revision="Mon May 25 2015 08:19:46 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -202,13 +202,28 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2.2" data-path="getseq/exercises.html">
+        <li class="chapter " data-level="2.2.2" data-path="getseq/example2.html">
+            
+                
+                    <a href="../getseq/example2.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.2.</b>
+                        
+                        Retrieving annotations example
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="getseq/exercises.html">
             
                 
                     <a href="../getseq/exercises.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>2.2.2.</b>
+                            <b>2.2.3.</b>
                         
                         Exercises
                     </a>
@@ -376,15 +391,30 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="4.2.1" data-path="distance/exercise1.html">
+        <li class="chapter " data-level="4.2.1" data-path="distance/example1.html">
+            
+                
+                    <a href="../distance/example1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.1.</b>
+                        
+                        Neighbour joining example
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="distance/exercise1.html">
             
                 
                     <a href="../distance/exercise1.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>4.2.1.</b>
+                            <b>4.2.2.</b>
                         
-                        Clustering exercise
+                        Exercise
                     </a>
                 
             
@@ -1068,7 +1098,10 @@
 <span class="hljs-keyword">library</span>(rentrez)
 <span class="hljs-keyword">library</span>(ape)
 <span class="hljs-keyword">library</span>(phangorn)
-<span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;utils.R&quot;</span>)
+</code></pre>
+<pre><code>## Warning: closing unused connection 5
+## (ray2000_edited.fas.mapped.degapped.aa)
+</code></pre><pre><code class="lang-r"><span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;utils.R&quot;</span>)
 </code></pre>
 <p>You also need to set your email address.</p>
 <pre><code class="lang-r">entrez_email &lt;- <span class="hljs-string">&quot;sdwfrost@gmail.com&quot;</span>
@@ -1115,12 +1148,18 @@ ray2000
 </code></pre>
 <pre><code class="lang-r">ray2000.ids &lt;- ray2000.link$pubmed_nuccore
 ray2000.post &lt;- entrez_post(db=<span class="hljs-string">&quot;nuccore&quot;</span>,id=ray2000.ids)
-ray2000.seqs &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>, WebEnv=ray2000.post$WebEnv, query_key=ray2000.post$QueryKey)
-ray2000.xml &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;xml&quot;</span>, WebEnv=ray2000.post$WebEnv, query_key=ray2000.post$QueryKey)
 </code></pre>
-<pre><code class="lang-r">write(ray2000.seqs,<span class="hljs-string">&quot;ray2000.fas&quot;</span>)
+<pre><code>## Error in function (type, msg, asError = TRUE) : Recv failure: Connection reset by peer
+</code></pre><pre><code class="lang-r">ray2000.seqs &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>, WebEnv=ray2000.post$WebEnv, query_key=ray2000.post$QueryKey)
 </code></pre>
-<h1 id="getting-all-genomes-from-a-virus-species">Getting all genomes from a virus species</h1>
+<pre><code>## Error in make_entrez_query(&quot;efetch&quot;, db = db, rettype = rettype, config = config, : object &apos;ray2000.post&apos; not found
+</code></pre><pre><code class="lang-r">ray2000.xml &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;xml&quot;</span>, WebEnv=ray2000.post$WebEnv, query_key=ray2000.post$QueryKey)
+</code></pre>
+<pre><code>## Error in make_entrez_query(&quot;efetch&quot;, db = db, rettype = rettype, config = config, : object &apos;ray2000.post&apos; not found
+</code></pre><pre><code class="lang-r">write(ray2000.seqs,<span class="hljs-string">&quot;ray2000.fas&quot;</span>)
+</code></pre>
+<pre><code>## Error in cat(x, file = file, sep = c(rep.int(sep, ncolumns - 1), &quot;\n&quot;), : object &apos;ray2000.seqs&apos; not found
+</code></pre><h1 id="getting-all-genomes-from-a-virus-species">Getting all genomes from a virus species</h1>
 <p>To get all genomes manually we:</p>
 <ul>
 <li>Search NCBI Taxonomy for the species and retrieve the taxonomic identifier</li>
@@ -1172,7 +1211,8 @@ length(seq.ids)
 <p>Next, we use <code>entrez_fetch</code> to fetch the sequences.</p>
 <pre><code class="lang-r">seqs.fasta &lt;- entrez_fetch(db=<span class="hljs-string">&quot;nuccore&quot;</span>, ids=<span class="hljs-string">&quot;&quot;</span>, rettype=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>, WebEnv=seqs.post$WebEnv, query_key=seqs.post$QueryKey, retend=<span class="hljs-number">100</span>)
 </code></pre>
-<pre><code class="lang-r">write(seqs.fasta,<span class="hljs-string">&quot;hcv_genomes.fas&quot;</span>)
+<pre><code>## Error in function (type, msg, asError = TRUE) : Recv failure: Connection reset by peer
+</code></pre><pre><code class="lang-r">write(seqs.fasta,<span class="hljs-string">&quot;hcv_genomes.fas&quot;</span>)
 </code></pre>
 
                     
@@ -1187,7 +1227,7 @@ length(seq.ids)
         <a href="../getseq/practice.html" class="navigation navigation-prev " aria-label="Previous page: Practice"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../getseq/exercises.html" class="navigation navigation-next " aria-label="Next page: Exercises"><i class="fa fa-angle-right"></i></a>
+        <a href="../getseq/example2.html" class="navigation navigation-next " aria-label="Next page: Retrieving annotations example"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
