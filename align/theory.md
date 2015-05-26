@@ -91,3 +91,33 @@ ARNDCQEGHILKMFPSTWYVBZX
 
 - It is extremely important to look at the alignment; every analysis downstream depends on having a good alignment
 - It is also important to avoid manually fixing sequence alignments, keeping a record of these changes if unavoidable
+
+## Learning objectives
+
+- Sequence alignment is hard!
+  - Nucleotide, amino acid or codon alignments
+  - Which program?
+  - You will have to find the best way for your own sequences
+- How to call external programs in R
+  - Useful when there is no equivalent in R
+  - Allows one to document the options used in a command line program
+
+## Calling external programs in R
+
+For example:
+
+
+```r
+cmd <- "muscle -version" # a command to send to the terminal
+system(cmd) # call the command
+```
+
+You have to be careful with these, as you can freeze R very easily. **Remember to save your work!**
+
+## Mini-pipelines
+
+- You may often need to chain commands together
+- The R library ```magrittr``` provides a way of doing this easily
+- It uses a special symbol ```%>%``` to send the output of one command to the next
+  - It uses a special placeholder ```.``` if the next command takes several arguments
+

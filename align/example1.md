@@ -54,17 +54,9 @@ nucseq
 nucseq.align <- msa(nucseq,method="Muscle")
 ```
 
-```
-## Error in is(inputSeq, "character"): object 'nucseq' not found
-```
-
 Save the resulting alignment to a file.
 
 
 ```r
 writeXStringSet(nucseq.align@unmasked,paste(nucseq.fn,".align",sep=""))
-```
-
-```
-## Error in is(x, "XStringSet"): object 'nucseq.align' not found
 ```

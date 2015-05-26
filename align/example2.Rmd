@@ -7,6 +7,7 @@ Alignment in protein space is potentially more accurate (although not always), b
 ```{r}
 library(Biostrings)
 library(seqinr)
+library(magrittr)
 source("utils.R")
 ```
 
@@ -150,9 +151,10 @@ reverse.align(paste(nucseq.fn,".mapped.degapped",sep=""),paste(nucseq.fn,".mappe
 
 ## Using codon-based alignment
 
-If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence.
+If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence. [MACSE](http://bioweb.supagro.inra.fr/macse/) is a program that can perform codon-based alignments.
 
 ```{r,eval=FALSE}
 cmd <- sprintf("java -jar macse_v1.01b.jar -prog alignSequences -seq %s",nucseq.fn)
+cmd # Look at the command we will call
 stdout <- system(cmd)
 ```

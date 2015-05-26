@@ -8,6 +8,7 @@ Alignment in protein space is potentially more accurate (although not always), b
 ```r
 library(Biostrings)
 library(seqinr)
+library(magrittr)
 source("utils.R")
 ```
 
@@ -161,19 +162,10 @@ nucseq.pa.matrix <- as.matrix(nucseq.pa)
 
 ```r
 nucseq.pa.coverage <- apply(nucseq.pa.matrix,2,nongaps)
-```
-
-```
-## Error in apply(nucseq.pa.matrix, 2, nongaps): object 'nucseq.pa.matrix' not found
-```
-
-```r
 plot(nucseq.pa.coverage,type="s",xlab="Position",ylab="Coverage")
 ```
 
-```
-## Error in plot(nucseq.pa.coverage, type = "s", xlab = "Position", ylab = "Coverage"): error in evaluating the argument 'x' in selecting a method for function 'plot': Error: object 'nucseq.pa.coverage' not found
-```
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
 
 I'll keep only columns with some non-gaps.
 
@@ -182,27 +174,12 @@ I'll keep only columns with some non-gaps.
 nucseq.pa.nongaps <- nucseq.pa.matrix[,nucseq.pa.coverage>0]
 ```
 
-```
-## Error in eval(expr, envir, enclos): object 'nucseq.pa.matrix' not found
-```
-
 I write the matrix of nucleotides to a file.
 
 
 ```r
 output <- paste(">",row.names(nucseq.pa.nongaps),"\n",apply(nucseq.pa.nongaps,1,paste,collapse=""),sep="")
-```
-
-```
-## Error in row.names(nucseq.pa.nongaps): object 'nucseq.pa.nongaps' not found
-```
-
-```r
 write(output,file=paste(nucseq.fn,".mapped.degapped",sep=""))
-```
-
-```
-## Error in cat(x, file = file, sep = c(rep.int(sep, ncolumns - 1), "\n"), : object 'output' not found
 ```
 
 ## Reverse alignment
@@ -216,26 +193,8 @@ Once we have an in-frame set of nucleotide sequences, we can repeat the same pro
 
 ```r
 myseqs <- read.fasta(paste(nucseq.fn,".mapped.degapped",sep=""))
-```
-
-```
-## Error in read.fasta(paste(nucseq.fn, ".mapped.degapped", sep = "")): no line starting with a > character found
-```
-
-```r
 myaaseq <- lapply(myseqs,translate)
-```
-
-```
-## Error in lapply(myseqs, translate): object 'myseqs' not found
-```
-
-```r
 write.fasta(myaaseq,file.out=paste(nucseq.fn,".mapped.degapped.aa",sep=""),names=names(myaaseq))
-```
-
-```
-## Error in write.fasta(myaaseq, file.out = paste(nucseq.fn, ".mapped.degapped.aa", : object 'myaaseq' not found
 ```
 
 
@@ -245,7 +204,19 @@ aaseq
 ```
 
 ```
-##   A AAStringSet instance of length 0
+##   A AAStringSet instance of length 71
+##      width seq                                         names               
+##  [1]   137 XLALLSCLTIPASAYEVRNV...PRRYQTVQDCNCSIYPGHVX AF271819
+##  [2]   137 XLALLSCLTVPASAYEVRNA...PRKHWTTQDCNCSIYAGHVX AF271820
+##  [3]   137 XLALLSCLTVPASAHEIRNA...PPQHWTTQDCNCSIYAGHIX AF271821
+##  [4]   137 XLALLSCLTVPASAYEIRNV...PRKHWTTQDCNCSIYPGHIX AF271823
+##  [5]   137 XLALLSCLTVPASAYEIRNV...PPQHWTTQDCNCSIYSGHVX AF271824
+##  ...   ... ...
+## [67]   137 LLALLSCLTVPTSAISYRNV...PRRHWTTQDCNCSIYTGHIX AF271868
+## [68]   137 LLALLSCLTVPASAINYHNV...PRRHWTTQDCNCSIYTGHIX AF271826
+## [69]   137 LLALLSCLTVPASATNYRNV...PRRHWTTQDCNCSIYTGHIX AF271837
+## [70]   137 LLALLSCLTVPASAINYRNV...PRRHWTTQDCNCSIYTGHIX AF271846
+## [71]   137 LLALLSCLTVPASAINYRNV...PRRHWTTQDCNCSIYTGHIX AF271840
 ```
 
 
@@ -254,7 +225,7 @@ aaseq.align <- msa(aaseq,method="Muscle")
 ```
 
 ```
-## Error in is(inputSeq, "character"): object 'aaseq' not found
+## Error in eval(expr, envir, enclos): could not find function "msa"
 ```
 
 ```r
@@ -273,16 +244,17 @@ reverse.align(paste(nucseq.fn,".mapped.degapped",sep=""),paste(nucseq.fn,".mappe
 ```
 
 ```
-## Error in read.fasta(nucl.file, forceDNAtolower = forceDNAtolower): no line starting with a > character found
+## Error in read.alignment(protaln.file, format = input.format, forceToLower = forceAAtolower): File ray2000_edited.fas.mapped.degapped.aa.align is not readable
 ```
 
 
 ## Using codon-based alignment
 
-If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence.
+If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence. [MACSE](http://bioweb.supagro.inra.fr/macse/) is a program that can perform codon-based alignments.
 
 
 ```r
 cmd <- sprintf("java -jar macse_v1.01b.jar -prog alignSequences -seq %s",nucseq.fn)
+cmd # Look at the command we will call
 stdout <- system(cmd)
 ```

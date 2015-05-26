@@ -7,6 +7,28 @@ Sequences in Genbank also have metadata associated with them. I have included a 
 source("utils.R")
 ```
 
+```
+## Loading required package: XML
+```
+
+```
+## Warning: closing unused connection 5
+## (ray2000_edited.fas.mapped.degapped.aa)
+```
+
+```
+## Loading required package: annotate
+## Loading required package: AnnotationDbi
+## Loading required package: Biobase
+## Welcome to Bioconductor
+## 
+##     Vignettes contain introductory material; view with
+##     'browseVignettes()'. To cite Bioconductor, see
+##     'citation("Biobase")', and for packages 'citation("pkgname")'.
+## 
+## Loading required package: GenomeInfoDb
+```
+
 This function is rather slow at the moment, but works on datasets of less than 500 sequences.
 
 
