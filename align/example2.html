@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2.2" data-basepath=".." data-revision="Tue May 26 2015 09:41:32 GMT+0100 (BST)">
+    <div class="book" data-level="3.2.2" data-basepath=".." data-revision="Tue May 26 2015 09:54:21 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1149,6 +1149,7 @@
 <h3 id="loading-libraries">Loading libraries</h3>
 <pre><code class="lang-r"><span class="hljs-keyword">library</span>(Biostrings)
 <span class="hljs-keyword">library</span>(seqinr)
+<span class="hljs-keyword">library</span>(magrittr)
 <span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;utils.R&quot;</span>)
 </code></pre>
 <h2 id="getting-a-good-translation">Getting a good translation</h2>
@@ -1237,23 +1238,17 @@ writeXStringSet(nucseq.pa,paste(nucseq.fn,<span class="hljs-string">&quot;.mappe
 </code></pre>
 <pre><code>## Error in as.vector(data): no method for coercing this S4 class to a vector
 </code></pre><pre><code class="lang-r">nucseq.pa.coverage &lt;- apply(nucseq.pa.matrix,<span class="hljs-number">2</span>,nongaps)
+plot(nucseq.pa.coverage,type=<span class="hljs-string">&quot;s&quot;</span>,xlab=<span class="hljs-string">&quot;Position&quot;</span>,ylab=<span class="hljs-string">&quot;Coverage&quot;</span>)
 </code></pre>
-<pre><code>## Error in apply(nucseq.pa.matrix, 2, nongaps): object &apos;nucseq.pa.matrix&apos; not found
-</code></pre><pre><code class="lang-r">plot(nucseq.pa.coverage,type=<span class="hljs-string">&quot;s&quot;</span>,xlab=<span class="hljs-string">&quot;Position&quot;</span>,ylab=<span class="hljs-string">&quot;Coverage&quot;</span>)
-</code></pre>
-<pre><code>## Error in plot(nucseq.pa.coverage, type = &quot;s&quot;, xlab = &quot;Position&quot;, ylab = &quot;Coverage&quot;): error in evaluating the argument &apos;x&apos; in selecting a method for function &apos;plot&apos;: Error: object &apos;nucseq.pa.coverage&apos; not found
-</code></pre><p>I&apos;ll keep only columns with some non-gaps.</p>
+<p><figure><img src="figure/unnamed-chunk-12-1.png" alt="plot of chunk unnamed-chunk-12"><figcaption>Figure: plot of chunk unnamed-chunk-12</figcaption></figure> </p>
+<p>I&apos;ll keep only columns with some non-gaps.</p>
 <pre><code class="lang-r">nucseq.pa.nongaps &lt;- nucseq.pa.matrix[,nucseq.pa.coverage&gt;<span class="hljs-number">0</span>]
 </code></pre>
-<pre><code>## Error in eval(expr, envir, enclos): object &apos;nucseq.pa.matrix&apos; not found
-</code></pre><p>I write the matrix of nucleotides to a file.</p>
+<p>I write the matrix of nucleotides to a file.</p>
 <pre><code class="lang-r">output &lt;- paste(<span class="hljs-string">&quot;&gt;&quot;</span>,row.names(nucseq.pa.nongaps),<span class="hljs-string">&quot;\n&quot;</span>,apply(nucseq.pa.nongaps,<span class="hljs-number">1</span>,paste,collapse=<span class="hljs-string">&quot;&quot;</span>),sep=<span class="hljs-string">&quot;&quot;</span>)
+write(output,file=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
 </code></pre>
-<pre><code>## Error in row.names(nucseq.pa.nongaps): object &apos;nucseq.pa.nongaps&apos; not found
-</code></pre><pre><code class="lang-r">write(output,file=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
-</code></pre>
-<pre><code>## Error in cat(x, file = file, sep = c(rep.int(sep, ncolumns - 1), &quot;\n&quot;), : object &apos;output&apos; not found
-</code></pre><h2 id="reverse-alignment">Reverse alignment</h2>
+<h2 id="reverse-alignment">Reverse alignment</h2>
 <p>Once we have an in-frame set of nucleotide sequences, we can repeat the same procedure as for the nucleotide sequences except:</p>
 <ul>
 <li>We translate our in-frame nucleotide sequences</li>
@@ -1261,31 +1256,39 @@ writeXStringSet(nucseq.pa,paste(nucseq.fn,<span class="hljs-string">&quot;.mappe
 <li>We map the nucleotide sequences back to the translated alignment</li>
 </ul>
 <pre><code class="lang-r">myseqs &lt;- read.fasta(paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+myaaseq &lt;- lapply(myseqs,translate)
+write.fasta(myaaseq,file.out=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),names=names(myaaseq))
 </code></pre>
-<pre><code>## Error in read.fasta(paste(nucseq.fn, &quot;.mapped.degapped&quot;, sep = &quot;&quot;)): no line starting with a &gt; character found
-</code></pre><pre><code class="lang-r">myaaseq &lt;- lapply(myseqs,translate)
-</code></pre>
-<pre><code>## Error in lapply(myseqs, translate): object &apos;myseqs&apos; not found
-</code></pre><pre><code class="lang-r">write.fasta(myaaseq,file.out=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),names=names(myaaseq))
-</code></pre>
-<pre><code>## Error in write.fasta(myaaseq, file.out = paste(nucseq.fn, &quot;.mapped.degapped.aa&quot;, : object &apos;myaaseq&apos; not found
-</code></pre><pre><code class="lang-r">aaseq &lt;- readAAStringSet(paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
+<pre><code class="lang-r">aaseq &lt;- readAAStringSet(paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
 aaseq
 </code></pre>
-<pre><code>##   A AAStringSet instance of length 0
+<pre><code>##   A AAStringSet instance of length 71
+##      width seq                                         names               
+##  [1]   137 XLALLSCLTIPASAYEVRNV...PRRYQTVQDCNCSIYPGHVX AF271819
+##  [2]   137 XLALLSCLTVPASAYEVRNA...PRKHWTTQDCNCSIYAGHVX AF271820
+##  [3]   137 XLALLSCLTVPASAHEIRNA...PPQHWTTQDCNCSIYAGHIX AF271821
+##  [4]   137 XLALLSCLTVPASAYEIRNV...PRKHWTTQDCNCSIYPGHIX AF271823
+##  [5]   137 XLALLSCLTVPASAYEIRNV...PPQHWTTQDCNCSIYSGHVX AF271824
+##  ...   ... ...
+## [67]   137 LLALLSCLTVPTSAISYRNV...PRRHWTTQDCNCSIYTGHIX AF271868
+## [68]   137 LLALLSCLTVPASAINYHNV...PRRHWTTQDCNCSIYTGHIX AF271826
+## [69]   137 LLALLSCLTVPASATNYRNV...PRRHWTTQDCNCSIYTGHIX AF271837
+## [70]   137 LLALLSCLTVPASAINYRNV...PRRHWTTQDCNCSIYTGHIX AF271846
+## [71]   137 LLALLSCLTVPASAINYRNV...PRRHWTTQDCNCSIYTGHIX AF271840
 </code></pre><pre><code class="lang-r">aaseq.align &lt;- msa(aaseq,method=<span class="hljs-string">&quot;Muscle&quot;</span>)
 </code></pre>
-<pre><code>## Error in is(inputSeq, &quot;character&quot;): object &apos;aaseq&apos; not found
+<pre><code>## Error in eval(expr, envir, enclos): could not find function &quot;msa&quot;
 </code></pre><pre><code class="lang-r">writeXStringSet(aaseq.align@unmasked,paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa.align&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
 </code></pre>
 <pre><code>## Error in is(x, &quot;XStringSet&quot;): object &apos;aaseq.align&apos; not found
 </code></pre><p>Map the nucleotide MSA to the amino acid MSA.</p>
 <pre><code class="lang-r">reverse.align(paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa.align&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),out.file=paste(nucseq.fn,<span class="hljs-string">&quot;.mapped.degapped.aa.revalign&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
 </code></pre>
-<pre><code>## Error in read.fasta(nucl.file, forceDNAtolower = forceDNAtolower): no line starting with a &gt; character found
+<pre><code>## Error in read.alignment(protaln.file, format = input.format, forceToLower = forceAAtolower): File ray2000_edited.fas.mapped.degapped.aa.align is not readable
 </code></pre><h2 id="using-codon-based-alignment">Using codon-based alignment</h2>
-<p>If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence.</p>
+<p>If all else fails, then codon-based alignment can help to fix multiple frameshifts, even without a reference sequence. <a href="http://bioweb.supagro.inra.fr/macse/" target="_blank">MACSE</a> is a program that can perform codon-based alignments.</p>
 <pre><code class="lang-r">cmd &lt;- sprintf(<span class="hljs-string">&quot;java -jar macse_v1.01b.jar -prog alignSequences -seq %s&quot;</span>,nucseq.fn)
+cmd <span class="hljs-comment"># Look at the command we will call</span>
 stdout &lt;- system(cmd)
 </code></pre>
 

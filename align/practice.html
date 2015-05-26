@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2" data-basepath=".." data-revision="Tue May 26 2015 09:41:32 GMT+0100 (BST)">
+    <div class="book" data-level="3.2" data-basepath=".." data-revision="Tue May 26 2015 09:54:21 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1151,11 +1151,7 @@
 <li><code>ips</code>: calls mafft and prank.</li>
 <li><code>ape</code>: calls ClustalW, MUSCLE, T-Coffee</li>
 </ul>
-<p>In addition, alignment programs can be called via <code>system</code> calls. For example:</p>
-<pre><code class="lang-r">cmd &lt;- <span class="hljs-string">&quot;muscle -version&quot;</span> <span class="hljs-comment"># a command to send to the terminal</span>
-system(cmd) <span class="hljs-comment"># call the command</span>
-</code></pre>
-<p>You have to be careful with these, as you can freeze R very easily. <strong>Remember to save your work!</strong></p>
+<p>In addition, alignment programs can be called via <code>system</code> calls.</p>
 <p>I will go through a worked example, showing how difficult it can sometimes be to align highly variable sequences, followed by an exercise involving simulated data, for which the true alignments are known.</p>
 
                     
