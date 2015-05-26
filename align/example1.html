@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2.1" data-basepath=".." data-revision="Tue May 26 2015 00:10:50 GMT+0100 (BST)">
+    <div class="book" data-level="3.2.1" data-basepath=".." data-revision="Tue May 26 2015 09:16:51 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1148,65 +1148,9 @@
 <h2 id="prerequisites">Prerequisites</h2>
 <p>First, load the libraries you need. We will use <code>Biostrings</code>, which will allow us to translate sequences, <code>msa</code>, which allows us to align using several external packages (bundled into R for easy installation), and <code>seqinr</code> for more sequence manipulation.</p>
 <pre><code class="lang-r"><span class="hljs-keyword">library</span>(Biostrings)
-</code></pre>
-<pre><code>## Loading required package: BiocGenerics
-## Loading required package: parallel
-## 
-## Attaching package: &apos;BiocGenerics&apos;
-## 
-## The following objects are masked from &apos;package:parallel&apos;:
-## 
-##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-##     clusterExport, clusterMap, parApply, parCapply, parLapply,
-##     parLapplyLB, parRapply, parSapply, parSapplyLB
-## 
-## The following object is masked from &apos;package:stats&apos;:
-## 
-##     xtabs
-## 
-## The following objects are masked from &apos;package:base&apos;:
-## 
-##     anyDuplicated, append, as.data.frame, as.vector, cbind,
-##     colnames, do.call, duplicated, eval, evalq, Filter, Find, get,
-##     intersect, is.unsorted, lapply, Map, mapply, match, mget,
-##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-##     rbind, Reduce, rep.int, rownames, sapply, setdiff, sort,
-##     table, tapply, union, unique, unlist, unsplit
-## 
-## Loading required package: S4Vectors
-## Loading required package: stats4
-## Loading required package: IRanges
-## Loading required package: XVector
-</code></pre><pre><code class="lang-r"><span class="hljs-keyword">library</span>(msa)
+<span class="hljs-keyword">library</span>(msa)
 <span class="hljs-keyword">library</span>(seqinr)
-</code></pre>
-<pre><code>## Loading required package: ade4
-## 
-## Attaching package: &apos;ade4&apos;
-## 
-## The following object is masked from &apos;package:Biostrings&apos;:
-## 
-##     score
-## 
-## The following object is masked from &apos;package:IRanges&apos;:
-## 
-##     score
-## 
-## The following object is masked from &apos;package:BiocGenerics&apos;:
-## 
-##     score
-## 
-## 
-## Attaching package: &apos;seqinr&apos;
-## 
-## The following object is masked from &apos;package:Biostrings&apos;:
-## 
-##     translate
-## 
-## The following objects are masked from &apos;package:ape&apos;:
-## 
-##     as.alignment, consensus
-</code></pre><pre><code class="lang-r"><span class="hljs-keyword">library</span>(magrittr)
+<span class="hljs-keyword">library</span>(magrittr)
 <span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;utils.R&quot;</span>)
 </code></pre>
 <p>It&apos;s also useful to set any run-specific filenames at the beginning, so you can reuse the document more easily. For this example, I&apos;ll use the Ray et al. (2000) dataset, edited so that it isn&apos;t aligned.</p>
@@ -1234,12 +1178,10 @@ nucseq
 ## [71]   411 CTTTTGGCACTTCTCTCGTG...TCTATACGGGGCACATCACT AF271840
 </code></pre><pre><code class="lang-r">nucseq.align &lt;- msa(nucseq,method=<span class="hljs-string">&quot;Muscle&quot;</span>)
 </code></pre>
-<pre><code>## Error in is(inputSeq, &quot;character&quot;): object &apos;nucseq&apos; not found
-</code></pre><p>Save the resulting alignment to a file.</p>
+<p>Save the resulting alignment to a file.</p>
 <pre><code class="lang-r">writeXStringSet(nucseq.align@unmasked,paste(nucseq.fn,<span class="hljs-string">&quot;.align&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>))
 </code></pre>
-<pre><code>## Error in is(x, &quot;XStringSet&quot;): object &apos;nucseq.align&apos; not found
-</code></pre>
+
                     
                     </section>
                 
