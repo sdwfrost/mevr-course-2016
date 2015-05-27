@@ -25,3 +25,11 @@ ggtree
 stringr
 ade4
 adephylo
+XVector
+Biostrings
+msa
+seqinr
+colorspace
+ips
+phylobase
+ggplot2
