@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="5.2" data-basepath=".." data-revision="Tue May 26 2015 09:54:21 GMT+0100 (BST)">
+    <div class="book" data-level="5.2" data-basepath=".." data-revision="Wed May 27 2015 09:46:16 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -529,32 +529,45 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="6.2.1" data-path="ml/exercise1.html">
+        <li class="chapter " data-level="6.2.1" data-path="ml/example1.html">
             
                 
-                    <a href="../ml/exercise1.html">
+                    <a href="../ml/example1.html">
                         <i class="fa fa-check"></i>
                         
                             <b>6.2.1.</b>
                         
-                        Model choice exercise
+                        Model choice example
                     </a>
                 
             
             
         </li>
     
-        <li class="chapter " data-level="6.2.2" data-path="ml/raxml.html">
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="ml/raxml.html">
             
                 
                     <a href="../ml/raxml.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>6.2.2.</b>
+                            <b>6.3.</b>
                         
-                        RAxML exercise
+                        RAxML example
                     </a>
                 
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.3.1" data-path="ml/exercise1.html">
+            
+            <span><b>6.3.1.</b> Tree reconstruction exercise</span>
             
             
         </li>
@@ -1145,20 +1158,14 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="practice">Practice</h1>
-<h2 id="load-libraries">Load libraries</h2>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="load-libraries">Load libraries</h3>
 <pre><code class="lang-r"><span class="hljs-keyword">library</span>(ape)
 <span class="hljs-keyword">library</span>(stepwise)
 <span class="hljs-keyword">library</span>(magrittr)
 <span class="hljs-keyword">library</span>(kdetrees)
 <span class="hljs-keyword">library</span>(phangorn)
-<span class="hljs-keyword">library</span>(bios2mds)
-</code></pre>
-<pre><code>## Loading required package: amap
-## Loading required package: e1071
-## Loading required package: scales
-## Loading required package: cluster
-## Loading required package: rgl
-</code></pre><pre><code class="lang-r"><span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;recombination.R&quot;</span>)
+<span class="hljs-keyword">source</span>(<span class="hljs-string">&quot;recombination.R&quot;</span>)
 </code></pre>
 <p>In addition to the libraries, I have also written some functions:</p>
 <ul>
@@ -1166,11 +1173,11 @@
 <li><code>sbtest</code>: generates trees either side of a breakpoint, and calculates the distance between the trees</li>
 <li><code>disttree</code>: calculates distances between all trees in a list</li>
 </ul>
-<h2 id="set-filename-and-outgroup">Set filename and outgroup</h2>
+<h3 id="set-filename-and-outgroup">Set filename and outgroup</h3>
 <pre><code class="lang-r">seqfilename &lt;- <span class="hljs-string">&quot;CRF7.fas&quot;</span>
 outgroup &lt;- <span class="hljs-string">&quot;J_SE7887&quot;</span>
 </code></pre>
-<h2 id="read-fasta-file">Read <a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">FASTA</a> file</h2>
+<h3 id="read-fasta-file">Read <a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">FASTA</a> file</h3>
 <pre><code class="lang-r">seqdata &lt;- read.dna(seqfilename,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
 seqdata
 </code></pre>
@@ -1183,7 +1190,8 @@ seqdata
 ## Base composition:
 ##     a     c     g     t 
 ## 0.366 0.173 0.236 0.225
-</code></pre><h2 id="output-data-with-clean-sequence-names">Output data with &apos;clean&apos; sequence names</h2>
+</code></pre><h3 id="output-data-with-clean-sequence-names-in-phylip-format">Output data with &apos;clean&apos; sequence names in Phylip format</h3>
+<p>Some of the tests we will use need to have sequence data in Phylip format, so we use R to convert.</p>
 <pre><code class="lang-r">seqdata.stepwise &lt;- seqdata
 row.names(seqdata.stepwise) &lt;- makeLabel(row.names(seqdata),len=<span class="hljs-number">9</span>)
 write.dna(seqdata.stepwise,file=paste(seqfilename,<span class="hljs-string">&quot;.stepwise&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),format=<span class="hljs-string">&quot;interleaved&quot;</span>,colsep=<span class="hljs-string">&quot;&quot;</span>,nbcol=-<span class="hljs-number">1</span>)
@@ -1213,22 +1221,15 @@ summary(seqdata.maxchi)
 ## Notes - &quot;Location&quot; is the polymorphic site just before the proposed breakpoint.
 ##       - MaxChi statistics significant at the 5 percent level indicated by a *
 </code></pre><h2 id="test-for-recombination-using-phylogenetic-profiling">Test for recombination using phylogenetic profiling</h2>
-<pre><code class="lang-r">seqdata.phylpro &lt;- phylpro(paste(seqfilename,<span class="hljs-string">&quot;.stepwise&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),breaks=seg.sites(seqdata),winHalfWidth=<span class="hljs-number">100</span>,permReps=<span class="hljs-number">100</span>)
+<p>Running the same window and permutations using phylogenetic profiling.</p>
+<pre><code class="lang-r">seqdata.phylpro &lt;- phylpro(paste(seqfilename,<span class="hljs-string">&quot;.stepwise&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>),breaks=seg.sites(seqdata),winHalfWidth=<span class="hljs-number">50</span>,permReps=<span class="hljs-number">100</span>)
 summary(seqdata.phylpro)
 </code></pre>
 <pre><code>## Length  Class   Mode 
 ##      0   NULL   NULL
-</code></pre><h2 id="sliding-window-phylogeny">Sliding window <a href="../GLOSSARY.html#phylogeny" class="glossary-term" title="A phylogeny is a branching diagram or tree showing the inferred evolutionary relationships among various biological species, based on differences in their physical or genetic characteristics &lt;a href=&quot;http://en.wikipedia.org/wiki/Phylogenetic_tree&quot;&gt;Wikipedia entry&lt;/a&gt;.">phylogeny</a></h2>
-<h3 id="making-a-single-tree">Making a single tree</h3>
-<p>Making a tree with a sequence alignment using a distance based approach involves making a distance matrix, performing tree reconstruction, perhaps rooting the tree, and plotting it out.</p>
-<p>The R library <code>magrittr</code> makes this more straightforward, by introducing an operator, <code>%&gt;%</code>, which sends the output of one command to the next. If the second command has more than one argument, we use the placeholder <code>.</code> instead. In this way, we can develop a mini-pipeline.</p>
-<pre><code class="lang-r">dist.dna(seqdata,<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a>&quot;</span>) %&gt;% <span class="hljs-comment"># Make distance matrix</span>
-  nj %&gt;% <span class="hljs-comment"># Neighbour joining</span>
-  root(.,outgroup=outgroup) %&gt;% <span class="hljs-comment"># Root with outgroup</span>
-  plot <span class="hljs-comment"># Plot tree</span>
-</code></pre>
-<pre><code>## Error in if (newroot == ROOT) {: argument is of length zero
-</code></pre><h3 id="making-a-set-of-trees">Making a set of trees</h3>
+</code></pre><h2 id="test-for-recombination-using-a-sliding-window-phylogeny">Test for recombination using a sliding window <a href="../GLOSSARY.html#phylogeny" class="glossary-term" title="A phylogeny is a branching diagram or tree showing the inferred evolutionary relationships among various biological species, based on differences in their physical or genetic characteristics &lt;a href=&quot;http://en.wikipedia.org/wiki/Phylogenetic_tree&quot;&gt;Wikipedia entry&lt;/a&gt;.">phylogeny</a></h2>
+<p>We have already covered making a tree with a sequence alignment using a distance based approach, which involves making a distance matrix, performing tree reconstruction, perhaps rooting the tree, and plotting it out.</p>
+<h3 id="making-a-set-of-trees">Making a set of trees</h3>
 <p>As the sequences are stored in a matrix, it is straightforward to make a list of alignments, each of which is a window on the original alignment.</p>
 <p>The following command generates sequence alignments 300 base pairs long, moving in steps of 10.</p>
 <pre><code class="lang-r">seqdata.slide &lt;- slidingWindowAlignment(seqdata,<span class="hljs-number">300</span>,<span class="hljs-number">10</span>)
@@ -1240,32 +1241,47 @@ length(seqdata.slide)
   lapply(.,njs)
 </code></pre>
 <h3 id="outlier-detection">Outlier detection</h3>
-<p>We now have a list of trees. How do we determine whether a single tree explains all the sub-alignments? One approach is to work out whether there are &apos;outlying trees&apos;. The command <code>kdetrees</code> computes a distribution of trees, then determines whether there are trees in the &apos;tail&apos; of the distribution.</p>
+<p>We now have a list of trees. How do we determine whether a single tree explains all the sub-alignments? One approach is to work out whether there are &apos;outlying trees&apos;. The command <code>kdetrees</code> computes a distribution of trees, then determines whether there are trees in the &apos;tail&apos; of the distribution. This requires an outgroup sequence to root the tree.</p>
 <pre><code class="lang-r">seqdata.slide.nj.kde &lt;- kdetrees(seqdata.slide.nj,outgroup=outgroup)
+seqdata.slide.nj.kde
 </code></pre>
-<p>Plotting out the output from this function will show the outlying trees, as a function of the index of the tree - each of which represents the tree from a slice of the original alignment.</p>
+<pre><code>## Call: kdetrees(trees = seqdata.slide.nj, outgroup = outgroup)
+## Density estimates:
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   915.4  2071.0  2364.0  2272.0  2531.0  2906.0 
+## Cutoff:  1380.953 
+## 
+## Outliers detected:
+##  [1] 577 578 579 580 581 582 583 584 585 586 587 588 589 590 591 592 593
+## [18] 594 595 596 597 598 599 600 601 602 603 604 605
+</code></pre><p>Plotting out the output from this function will show the outlying trees, as a function of the index of the tree - each of which represents the tree from a slice of the original alignment.</p>
 <pre><code class="lang-r">plot(seqdata.slide.nj.kde)
 </code></pre>
-<pre><code>## Error in plot(seqdata.slide.nj.kde): error in evaluating the argument &apos;x&apos; in selecting a method for function &apos;plot&apos;: Error: object &apos;seqdata.slide.nj.kde&apos; not found
-</code></pre><p>We can also plot out a histogram.</p>
+<p><figure><img src="figure/unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11"><figcaption>Figure: plot of chunk unnamed-chunk-11</figcaption></figure> </p>
+<p>We can also plot out a histogram.</p>
 <pre><code class="lang-r">hist(seqdata.slide.nj.kde)
 </code></pre>
-<pre><code>## Error in hist(seqdata.slide.nj.kde): object &apos;seqdata.slide.nj.kde&apos; not found
-</code></pre><h3 id="distances-between-trees">Distances between trees</h3>
-<p>Another way is to work out the distances between trees.</p>
-<pre><code class="lang-r">seqdata.slide.treedist &lt;- disttree(seqdata.slide.nj)
+<p><figure><img src="figure/unnamed-chunk-12-1.png" alt="plot of chunk unnamed-chunk-12"><figcaption>Figure: plot of chunk unnamed-chunk-12</figcaption></figure> </p>
+<p>Lets take two trees, one outlier, and one non-outlier.</p>
+<pre><code class="lang-r">par(mfrow=c(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>))
+plot(seqdata.slide.nj[[<span class="hljs-number">200</span>]])
+plot(seqdata.slide.nj[[<span class="hljs-number">600</span>]])
 </code></pre>
-<pre><code class="lang-r">seqdata.slide.treemds &lt;- mmds(seqdata.slide.treedist[[<span class="hljs-number">1</span>]],pc=<span class="hljs-number">2</span>)
-mmds.2D.plot(seqdata.slide.treemds)
+<p><figure><img src="figure/unnamed-chunk-13-1.png" alt="plot of chunk unnamed-chunk-13"><figcaption>Figure: plot of chunk unnamed-chunk-13</figcaption></figure> </p>
+<p>How are these different?</p>
+<p>The command <code>cophyloplot</code> in <code>ape</code> allows us to plot two trees face-to-face in order to compare them more easily. This function takes the two trees as arguments, plus a matrix with the associations between the labels in the two trees - this is for cases where the labels in the trees may be different (e.g. comparing host and parasite phylogenies). In our case, the labels are the same.</p>
+<pre><code class="lang-r">association &lt;- matrix(c(<span class="hljs-string">&quot;CRF7_C54A&quot;</span>,<span class="hljs-string">&quot;CRF7_C54A&quot;</span>),nrow=<span class="hljs-number">1</span>,ncol=<span class="hljs-number">2</span>)
+cophyloplot(seqdata.slide.nj[[<span class="hljs-number">200</span>]],seqdata.slide.nj[[<span class="hljs-number">600</span>]],assoc=association)
 </code></pre>
-<h3 id="single-breakpoint-test">Single breakpoint test</h3>
-<p>This function splits the alignment into two (at least 300 base pairs long), and calculates the distance between the trees for either side of the breakpoint.</p>
+<p><figure><img src="figure/unnamed-chunk-14-1.png" alt="plot of chunk unnamed-chunk-14"><figcaption>Figure: plot of chunk unnamed-chunk-14</figcaption></figure> </p>
+<h2 id="single-breakpoint-test">Single breakpoint test</h2>
+<p>A sliding window approach may be best if there are recombinant fragments, but if the sequences have a single recombinant breakpoint, then a different approach may be more powerful. This function splits the alignment into two (at least 300 base pairs long), and calculates the distance between the trees for either side of the breakpoint.</p>
 <pre><code class="lang-r">seqdata.sbt &lt;- sbtest(seqdata,<span class="hljs-number">300</span>,<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a>&quot;</span>)
 </code></pre>
 <p>Now we can plot the distance between the trees as a function of the breakpoint.</p>
 <pre><code class="lang-r">plot(symdiff~breakpoint,data=seqdata.sbt,type=<span class="hljs-string">&quot;s&quot;</span>)
 </code></pre>
-<p><figure><img src="figure/unnamed-chunk-17-1.png" alt="plot of chunk unnamed-chunk-17"><figcaption>Figure: plot of chunk unnamed-chunk-17</figcaption></figure> </p>
+<p><figure><img src="figure/unnamed-chunk-16-1.png" alt="plot of chunk unnamed-chunk-16"><figcaption>Figure: plot of chunk unnamed-chunk-16</figcaption></figure> </p>
 
                     
                     </section>

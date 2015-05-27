@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="6.1" data-basepath=".." data-revision="Tue May 26 2015 09:54:21 GMT+0100 (BST)">
+    <div class="book" data-level="6.1" data-basepath=".." data-revision="Wed May 27 2015 09:46:16 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -529,32 +529,45 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="6.2.1" data-path="ml/exercise1.html">
+        <li class="chapter " data-level="6.2.1" data-path="ml/example1.html">
             
                 
-                    <a href="../ml/exercise1.html">
+                    <a href="../ml/example1.html">
                         <i class="fa fa-check"></i>
                         
                             <b>6.2.1.</b>
                         
-                        Model choice exercise
+                        Model choice example
                     </a>
                 
             
             
         </li>
     
-        <li class="chapter " data-level="6.2.2" data-path="ml/raxml.html">
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="ml/raxml.html">
             
                 
                     <a href="../ml/raxml.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>6.2.2.</b>
+                            <b>6.3.</b>
                         
-                        RAxML exercise
+                        RAxML example
                     </a>
                 
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.3.1" data-path="ml/exercise1.html">
+            
+            <span><b>6.3.1.</b> Tree reconstruction exercise</span>
             
             
         </li>
@@ -1150,6 +1163,7 @@
 <li>Methods that fit a model of molecular evolution to the sequence data are more computationally intensive, but typically show better performance than distance based methods</li>
 </ul>
 <h2 id="how-many-trees">How many trees?</h2>
+<hr>
 <ul>
 <li>How many trees are possible with 12 sequences</li>
 <li>[ ] 105</li>
@@ -1157,10 +1171,37 @@
 <li>[ ] 2,027,025</li>
 <li>[x] 654,729,025</li>
 </ul>
+<hr>
 <h2 id="maximum-likelihood-inference">Maximum likelihood inference</h2>
 <ul>
 <li>The large number of trees makes it difficult to find the tree with the highest likelihood</li>
-<li><a href="../GLOSSARY.html#phylogeny" class="glossary-term" title="A phylogeny is a branching diagram or tree showing the inferred evolutionary relationships among various biological species, based on differences in their physical or genetic characteristics &lt;a href=&quot;http://en.wikipedia.org/wiki/Phylogenetic_tree&quot;&gt;Wikipedia entry&lt;/a&gt;.">Phylogeny</a> programs have to use heuristic approaches to find the &apos;best&apos; tree</li>
+<li><a href="../GLOSSARY.html#phylogeny" class="glossary-term" title="A phylogeny is a branching diagram or tree showing the inferred evolutionary relationships among various biological species, based on differences in their physical or genetic characteristics &lt;a href=&quot;http://en.wikipedia.org/wiki/Phylogenetic_tree&quot;&gt;Wikipedia entry&lt;/a&gt;.">Phylogeny</a> programs have to use heuristic approaches to find the &apos;best&apos; tree<ul>
+<li>Starting with an initial tree, make modifications and test whether they give a better tree or not<ul>
+<li>Nearest neighbour interchange</li>
+<li>Subtree pruning and regrafting</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="models-of-dna-evolution">Models of DNA evolution</h2>
+<ul>
+<li>Just like with distance based methods, we assume a model of sequence evolution</li>
+<li>However, we can now test which is the &apos;best&apos; model</li>
+<li>We often don&apos;t need a good tree for this</li>
+</ul>
+<h2 id="rate-heterogeneity">Rate heterogeneity</h2>
+<ul>
+<li>In addition to assuming a model of how, for example, one nucleotide changes to another, we can also assume a model of how substitution rates overall vary across the sequence<ul>
+<li>Constrained regions e.g. those that are functionally important</li>
+<li>Variable regions e.g. those under immune selection</li>
+</ul>
+</li>
+<li>Two sorts of models of rate heterogeneity<ul>
+<li>Gamma distribution (possibly with an additional invariant category)</li>
+<li>Categorical</li>
+</ul>
+</li>
 </ul>
 
                     
