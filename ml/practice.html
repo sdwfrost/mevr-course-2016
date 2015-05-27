@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="6.2" data-basepath=".." data-revision="Wed May 27 2015 09:49:07 GMT+0100 (BST)">
+    <div class="book" data-level="6.2" data-basepath=".." data-revision="Wed May 27 2015 14:44:06 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1179,6 +1179,46 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="practice">Practice</h1>
+<ul>
+<li>The <code>phangorn</code> library in R contains functions to perform maximum likelihood based analyses of sequence data<ul>
+<li>While not the fastest program, it is very flexible</li>
+<li>Can fit a wide variety of substitution models</li>
+</ul>
+</li>
+<li>For large-scale phylogenetic inference, there are specialised (external) software packages available<ul>
+<li>RAxML/ExaML</li>
+<li>PhyML</li>
+<li>IQTREE</li>
+</ul>
+</li>
+<li>As with alignment, we can use R to format the data, and call these external programs</li>
+<li>There is also an interface to RAxML in the <code>ips</code> package</li>
+</ul>
+<h2 id="-phangorn"><code>phangorn</code></h2>
+<ul>
+<li>Takes data in a special format, <code>phyDat</code><ul>
+<li>Sequences read in using <code>ape</code> are in <code>DNAbin</code> format</li>
+<li>There is a convenience function called <code>as.phyDat</code> that can convert between them</li>
+</ul>
+</li>
+<li>Can compare between different models using <code>modelTest</code></li>
+<li>Can fit models (and trees) using <code>pml</code></li>
+</ul>
+<h2 id="raxml">RAxML</h2>
+<ul>
+<li><a href="http://sco.h-its.org/exelixis/web/software/raxml/index.html" target="_blank">RAxML</a> is one of the fastest, most accurate <a href="../GLOSSARY.html#phylogeny" class="glossary-term" title="A phylogeny is a branching diagram or tree showing the inferred evolutionary relationships among various biological species, based on differences in their physical or genetic characteristics &lt;a href=&quot;http://en.wikipedia.org/wiki/Phylogenetic_tree&quot;&gt;Wikipedia entry&lt;/a&gt;.">phylogeny</a> reconstruction software packages available</li>
+<li>It does <em>not</em> implement a wide variety of models, instead, it assumes a fairly complex one, which will probably be the best model if the dataset is variable enough</li>
+</ul>
+<h2 id="phyml">PhyML</h2>
+<ul>
+<li><a href="https://code.google.com/p/phyml/" target="_blank">PhyML</a> is slower than RAxML, but offers a wider variety of models</li>
+<li>Also offers an interactive (text) interface</li>
+</ul>
+<h2 id="iqtree">IQTREE</h2>
+<ul>
+<li><a href="http://www.cibiv.at/software/iqtree/" target="_blank">IQTREE</a> is a fairly new phylogenetic software package</li>
+<li>It <em>does</em> implement a variety of models, and includes model selection and a fast bootstrap-like procedure</li>
+</ul>
 
                     
                     </section>

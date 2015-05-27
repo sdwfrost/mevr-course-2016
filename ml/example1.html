@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="6.2.1" data-basepath=".." data-revision="Wed May 27 2015 09:49:07 GMT+0100 (BST)">
+    <div class="book" data-level="6.2.1" data-basepath=".." data-revision="Wed May 27 2015 14:44:06 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1184,42 +1184,205 @@
 <span class="hljs-keyword">library</span>(phangorn)
 </code></pre>
 <p>Load in the sequence data and the neighbour joining tree.</p>
-<pre><code class="lang-r">myalignment &lt;- read.dna(<span class="hljs-string">&quot;myseqs_aligned_pruned.fas&quot;</span>,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
-mytree  &lt;- read.tree(<span class="hljs-string">&quot;myseqs_aligned_pruned_nj_tn93.tre&quot;</span>)
+<pre><code class="lang-r">myalignment &lt;- read.dna(<span class="hljs-string">&quot;ray2000_aligned.fas&quot;</span>,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
+mytree  &lt;- nj(dist.dna(myalignment,<span class="hljs-string">&quot;<a href="../GLOSSARY.html#tn93" class="glossary-term" title="The Tamura-Nei model of nucleotide substitution. See &lt;a href=&quot;http://en.wikipedia.org/wiki/Models_of_DNA_evolution&quot;&gt;this Wikipedia entry&lt;/a&gt; for details of this and other models of DNA evolution.">TN93</a>&quot;</span>))
 </code></pre>
 <p>Now compare different models.</p>
-<pre><code class="lang-r">myseq.phydat &lt;- as.phyDat(myseq) <span class="hljs-comment"># Convert to a format modeltest understand</span>
+<pre><code class="lang-r">myalignment.phydat &lt;- as.phyDat(myalignment) <span class="hljs-comment"># Convert to a format modeltest understand</span>
+myalignment.modeltest &lt;- modelTest(myalignment.phydat,
+                             tree=mytree,
+                             model = c(<span class="hljs-string">&quot;JC&quot;</span>, <span class="hljs-string">&quot;F81&quot;</span>, <span class="hljs-string">&quot;K80&quot;</span>, <span class="hljs-string">&quot;HKY&quot;</span>, <span class="hljs-string">&quot;SYM&quot;</span>, <span class="hljs-string">&quot;GTR&quot;</span>),
+                             G = <span class="hljs-literal">TRUE</span>,
+                             I = <span class="hljs-literal">TRUE</span>,
+                             k = <span class="hljs-number">4</span>,
+                             control = pml.control(epsilon = <span class="hljs-number">1e-08</span>, maxit = <span class="hljs-number">3</span>, trace = <span class="hljs-number">1</span>),
+                             multicore = <span class="hljs-literal">FALSE</span>)
 </code></pre>
-<pre><code>## Error in as.phyDat(myseq): object &apos;myseq&apos; not found
-</code></pre><pre><code class="lang-r">myseq.modeltest &lt;- modelTest(myseq.phydat,tree=mytree,model = c(<span class="hljs-string">&quot;JC&quot;</span>, <span class="hljs-string">&quot;F81&quot;</span>, <span class="hljs-string">&quot;K80&quot;</span>, <span class="hljs-string">&quot;HKY&quot;</span>, <span class="hljs-string">&quot;SYM&quot;</span>, <span class="hljs-string">&quot;GTR&quot;</span>), G = <span class="hljs-literal">TRUE</span>, I = <span class="hljs-literal">TRUE</span>, k = <span class="hljs-number">4</span>, control = pml.control(epsilon = <span class="hljs-number">1e-08</span>, maxit = <span class="hljs-number">3</span>, trace = <span class="hljs-number">1</span>), multicore = <span class="hljs-literal">FALSE</span>)
+<pre><code>## Warning in pml(tree, data): negative edges length changed to 0!
+</code></pre><pre><code>## [1] &quot;JC+I&quot;
+## [1] &quot;JC+G&quot;
+## [1] &quot;JC+G+I&quot;
+## [1] &quot;F81+I&quot;
+## [1] &quot;F81+G&quot;
+## [1] &quot;F81+G+I&quot;
+## [1] &quot;K80+I&quot;
+## [1] &quot;K80+G&quot;
+## [1] &quot;K80+G+I&quot;
+## [1] &quot;HKY+I&quot;
+## [1] &quot;HKY+G&quot;
+## [1] &quot;HKY+G+I&quot;
+## [1] &quot;SYM+I&quot;
+## [1] &quot;SYM+G&quot;
+## [1] &quot;SYM+G+I&quot;
+## [1] &quot;GTR+I&quot;
+## [1] &quot;GTR+G&quot;
+## [1] &quot;GTR+G+I&quot;
+</code></pre><pre><code class="lang-r">myalignment.modeltest
 </code></pre>
-<pre><code>## Error in modelTest(myseq.phydat, tree = mytree, model = c(&quot;JC&quot;, &quot;F81&quot;, : object &apos;myseq.phydat&apos; not found
-</code></pre><pre><code class="lang-r">myseq.modeltest
+<pre><code>##      Model  df    logLik      AIC      BIC
+## 1       JC 139 -9093.606 18465.21 19023.80
+## 2     JC+I 140 -8618.051 17516.10 18078.71
+## 3     JC+G 140 -8368.362 17016.72 17579.33
+## 4   JC+G+I 141 -8351.732 16985.46 17552.09
+## 5      F81 142 -9005.856 18295.71 18866.35
+## 6    F81+I 143 -8525.408 17336.82 17911.47
+## 7    F81+G 143 -8251.858 16789.72 17364.38
+## 8  F81+G+I 144 -8238.720 16765.44 17344.12
+## 9      K80 140 -8482.996 17245.99 17808.60
+## 10   K80+I 141 -7980.468 16242.94 16809.56
+## 11   K80+G 141 -7685.580 15653.16 16219.78
+## 12 K80+G+I 142 -7667.595 15619.19 16189.83
+## 13     HKY 143 -8440.617 17167.23 17741.89
+## 14   HKY+I 144 -7916.114 16120.23 16698.91
+## 15   HKY+G 144 -7636.388 15560.78 16139.45
+## 16 HKY+G+I 145 -7616.750 15523.50 16106.20
+## 17     SYM 144 -8445.450 17178.90 17757.58
+## 18   SYM+I 145 -7943.376 16176.75 16759.45
+## 19   SYM+G 145 -7649.702 15589.40 16172.10
+## 20 SYM+G+I 146 -7631.733 15555.47 16142.18
+## 21     GTR 147 -8436.124 17166.25 17756.98
+## 22   GTR+I 148 -7903.426 16102.85 16697.60
+## 23   GTR+G 148 -7622.485 15540.97 16135.72
+## 24 GTR+G+I 149 -7601.719 15501.44 16100.21
+</code></pre><p>Using R, we can look for the model e.g. with the lowest AIC.</p>
+<pre><code class="lang-r">myalignment.modeltest$Model[myalignment.modeltest$AIC==min(myalignment.modeltest$AIC)]
 </code></pre>
-<pre><code>## Error in eval(expr, envir, enclos): object &apos;myseq.modeltest&apos; not found
-</code></pre><p>Now obtain a maximum likelihood tree, starting from the neighbour joining tree. Although this can be done all in one command, using <code>optim.pml</code>, this shows how you can get finer control, and in principle get a tree faster.</p>
-<pre><code class="lang-r">myseq.gtrig &lt;- pml(mytree,myseq.phydat,model=<span class="hljs-string">&quot;GTR+I+G&quot;</span>,k=<span class="hljs-number">4</span>)
+<pre><code>## [1] &quot;GTR+G+I&quot;
+</code></pre><p>Now obtain a maximum likelihood tree, starting from the neighbour joining tree, and using the model chosen from <code>modelTest</code>.</p>
+<pre><code class="lang-r">myalignment.pml &lt;- pml(mytree,myalignment.phydat,model=<span class="hljs-string">&quot;GTR+I+G&quot;</span>,k=<span class="hljs-number">4</span>)
 </code></pre>
-<pre><code>## Warning in pml(mytree, myseq.phydat, model = &quot;GTR+I+G&quot;, k = 4): negative
-## edges length changed to 0!
-</code></pre><pre><code>## Error in pml(mytree, myseq.phydat, model = &quot;GTR+I+G&quot;, k = 4): object &apos;myseq.phydat&apos; not found
+<pre><code>## Warning in pml(mytree, myalignment.phydat, model = &quot;GTR+I+G&quot;, k = 4):
+## negative edges length changed to 0!
 </code></pre><pre><code class="lang-r"><span class="hljs-comment"># optimise</span>
-myseq.gtrig &lt;- optim.pml(myseq.gtrig,optNni=<span class="hljs-literal">TRUE</span>,optBf=<span class="hljs-literal">TRUE</span>,optQ=<span class="hljs-literal">TRUE</span>,optInv=<span class="hljs-literal">TRUE</span>,optGamma=<span class="hljs-literal">TRUE</span>,optEdge=<span class="hljs-literal">TRUE</span>,optRate=<span class="hljs-literal">TRUE</span>)
+myalignment.pml &lt;- optim.pml(myalignment.pml,optNni=<span class="hljs-literal">TRUE</span>,optBf=<span class="hljs-literal">TRUE</span>,optQ=<span class="hljs-literal">TRUE</span>,optInv=<span class="hljs-literal">TRUE</span>,optGamma=<span class="hljs-literal">TRUE</span>,optEdge=<span class="hljs-literal">TRUE</span>)
 </code></pre>
-<pre><code>## Error in optim.pml(myseq.gtrig, optNni = TRUE, optBf = TRUE, optQ = TRUE, : object &apos;myseq.gtrig&apos; not found
+<pre><code>## optimize edge weights:  -8617.809 --&gt; -8415.953 
+## optimize base frequencies:  -8415.953 --&gt; -8306.962 
+## optimize rate matrix:  -8306.962 --&gt; -7739.162 
+## optimize invariant sites:  -7739.162 --&gt; -7662.088 
+## optimize shape parameter:  -7662.088 --&gt; -7662.088 
+## optimize edge weights:  -7662.088 --&gt; -7637.825 
+## optimize topology:  -7637.825 --&gt; -7621.82 
+## optimize topology:  -7621.82 --&gt; -7617.04 
+## optimize topology:  -7617.04 --&gt; -7606.44 
+## 20 
+## optimize base frequencies:  -7606.44 --&gt; -7590.913 
+## optimize rate matrix:  -7590.913 --&gt; -7579.069 
+## optimize invariant sites:  -7579.069 --&gt; -7579.068 
+## optimize shape parameter:  -7579.068 --&gt; -7578.92 
+## optimize edge weights:  -7578.92 --&gt; -7577.282 
+## optimize topology:  -7577.282 --&gt; -7565.306 
+## optimize topology:  -7565.306 --&gt; -7557.973 
+## optimize topology:  -7557.973 --&gt; -7554.848 
+## 15 
+## optimize base frequencies:  -7554.848 --&gt; -7551.863 
+## optimize rate matrix:  -7551.863 --&gt; -7550.22 
+## optimize invariant sites:  -7550.22 --&gt; -7550.168 
+## optimize shape parameter:  -7550.168 --&gt; -7550.117 
+## optimize edge weights:  -7550.117 --&gt; -7549.979 
+## optimize topology:  -7549.979 --&gt; -7542.122 
+## optimize topology:  -7542.122 --&gt; -7541.302 
+## optimize topology:  -7541.302 --&gt; -7541.302 
+## 6 
+## optimize base frequencies:  -7541.302 --&gt; -7540.721 
+## optimize rate matrix:  -7540.721 --&gt; -7540.306 
+## optimize invariant sites:  -7540.306 --&gt; -7540.295 
+## optimize shape parameter:  -7540.295 --&gt; -7540.288 
+## optimize edge weights:  -7540.288 --&gt; -7540.272 
+## optimize topology:  -7540.272 --&gt; -7540.272 
+## 0 
+## optimize base frequencies:  -7540.272 --&gt; -7540.091 
+## optimize rate matrix:  -7540.091 --&gt; -7539.995 
+## optimize invariant sites:  -7539.995 --&gt; -7539.994 
+## optimize shape parameter:  -7539.994 --&gt; -7539.992 
+## optimize edge weights:  -7539.992 --&gt; -7539.991 
+## optimize base frequencies:  -7539.991 --&gt; -7539.936 
+## optimize rate matrix:  -7539.936 --&gt; -7539.905 
+## optimize invariant sites:  -7539.905 --&gt; -7539.904 
+## optimize shape parameter:  -7539.904 --&gt; -7539.904 
+## optimize edge weights:  -7539.904 --&gt; -7539.904 
+## optimize base frequencies:  -7539.904 --&gt; -7539.887 
+## optimize rate matrix:  -7539.887 --&gt; -7539.878 
+## optimize invariant sites:  -7539.878 --&gt; -7539.878 
+## optimize shape parameter:  -7539.878 --&gt; -7539.878 
+## optimize edge weights:  -7539.878 --&gt; -7539.877 
+## optimize base frequencies:  -7539.877 --&gt; -7539.872 
+## optimize rate matrix:  -7539.872 --&gt; -7539.869 
+## optimize invariant sites:  -7539.869 --&gt; -7539.869 
+## optimize shape parameter:  -7539.869 --&gt; -7539.869 
+## optimize edge weights:  -7539.869 --&gt; -7539.869 
+## optimize base frequencies:  -7539.869 --&gt; -7539.868 
+## optimize rate matrix:  -7539.868 --&gt; -7539.867 
+## optimize invariant sites:  -7539.867 --&gt; -7539.867 
+## optimize shape parameter:  -7539.867 --&gt; -7539.867 
+## optimize edge weights:  -7539.867 --&gt; -7539.867 
+## optimize base frequencies:  -7539.867 --&gt; -7539.867 
+## optimize rate matrix:  -7539.867 --&gt; -7539.866 
+## optimize invariant sites:  -7539.866 --&gt; -7539.866 
+## optimize shape parameter:  -7539.866 --&gt; -7539.866 
+## optimize edge weights:  -7539.866 --&gt; -7539.866 
+## optimize base frequencies:  -7539.866 --&gt; -7539.866 
+## optimize rate matrix:  -7539.866 --&gt; -7539.866 
+## optimize invariant sites:  -7539.866 --&gt; -7539.866 
+## optimize shape parameter:  -7539.866 --&gt; -7539.866 
+## optimize edge weights:  -7539.866 --&gt; -7539.866 
+## optimize base frequencies:  -7539.866 --&gt; -7539.866 
+## optimize rate matrix:  -7539.866 --&gt; -7539.866 
+## optimize invariant sites:  -7539.866 --&gt; -7539.866 
+## optimize shape parameter:  -7539.866 --&gt; -7539.866 
+## optimize edge weights:  -7539.866 --&gt; -7539.866
 </code></pre><pre><code class="lang-r"><span class="hljs-comment"># display</span>
-myseq.gtrig
+myalignment.pml
 </code></pre>
-<pre><code>## Error in eval(expr, envir, enclos): object &apos;myseq.gtrig&apos; not found
+<pre><code>## 
+##  loglikelihood: -7539.866 
+## 
+## unconstrained loglikelihood: -1990.566 
+## Proportion of invariant sites: 0.270931 
+## Discrete gamma model
+## Number of rate categories: 4 
+## Shape parameter: 0.905875 
+## 
+## Rate matrix:
+##          a          c         g         t
+## a 0.000000  1.3729288 8.0371277  1.684299
+## c 1.372929  0.0000000 0.7245706 11.250734
+## g 8.037128  0.7245706 0.0000000  1.000000
+## t 1.684299 11.2507341 1.0000000  0.000000
+## 
+## Base frequencies:  
+## 0.1764514 0.3412765 0.2521093 0.2301627
+</code></pre><p>This shows the maximum likelihood parameter values. The ML tree is contained in the fit as well.</p>
+<pre><code class="lang-r">myalignment.pml$tree
+</code></pre>
+<pre><code>## 
+## Phylogenetic tree with 71 tips and 69 internal nodes.
+## 
+## Tip labels:
+##     AF271819, AF271820, AF271821, AF271823, AF271824, AF271822, ...
+## 
+## Unrooted; includes branch lengths.
+</code></pre><p>We can compare our original tree and our new tree numerically using <code>treedist</code>.</p>
+<pre><code class="lang-r">treedist(myalignment.pml$tree,mytree)
+</code></pre>
+<pre><code>##      symmetric.difference   branch.score.difference 
+##                 56.000000                  1.024206 
+##           path.difference quadratic.path.difference 
+##                153.701008                 42.384989
+</code></pre><p>This isn&apos;t particularly helpful. A comparison of edge lengths is quite striking.</p>
+<pre><code class="lang-r">sum(myalignment.pml$tree$edge.length)
+</code></pre>
+<pre><code>## [1] 7.13001
+</code></pre><pre><code class="lang-r">sum(mytree$edge.length)
+</code></pre>
+<pre><code>## [1] 3.115848
 </code></pre><p>Now we can perform a bootstrap, starting with our &apos;best&apos; maximum likelihood tree, and performing nearest neighbour interchanges.</p>
-<pre><code class="lang-r">myseq.gtrig.bs &lt;- bootstrap.pml(myseq.gtrig,bs=<span class="hljs-number">100</span>,trees=<span class="hljs-literal">TRUE</span>,optNni=<span class="hljs-literal">TRUE</span>)
+<pre><code class="lang-r">myalignment.pml.bs &lt;- bootstrap.pml(myalignment.pml,bs=<span class="hljs-number">100</span>,trees=<span class="hljs-literal">TRUE</span>,optNni=<span class="hljs-literal">TRUE</span>)
 </code></pre>
-<pre><code>## Error in bootstrap.pml(myseq.gtrig, bs = 100, trees = TRUE, optNni = TRUE): object &apos;myseq.gtrig&apos; not found
-</code></pre><p>As with the neighbour-joining tree, we can overlay bootstrap supports on our maximum likelihood tree.</p>
-<pre><code class="lang-r">plotBS(myseq.gtrig$tree,myseq.gtrig.bs,type=<span class="hljs-string">&quot;phylogram&quot;</span>,cex=<span class="hljs-number">0.5</span>)
+<p>As with the neighbour-joining tree, we can overlay bootstrap supports on our maximum likelihood tree.</p>
+<pre><code class="lang-r">plotBS(myalignment.pml$tree,myalignment.pml.bs,type=<span class="hljs-string">&quot;phylogram&quot;</span>,cex=<span class="hljs-number">0.5</span>)
 </code></pre>
-<pre><code>## Error in inherits(phy, &quot;phylo&quot;): object &apos;myseq.gtrig&apos; not found
-</code></pre>
+
                     
                     </section>
                 

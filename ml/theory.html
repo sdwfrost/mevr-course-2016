@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="6.1" data-basepath=".." data-revision="Wed May 27 2015 09:49:07 GMT+0100 (BST)">
+    <div class="book" data-level="6.1" data-basepath=".." data-revision="Wed May 27 2015 14:44:06 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1223,6 +1223,22 @@
 <li>Categorical</li>
 </ul>
 </li>
+</ul>
+<h2 id="balancing-model-fit-and-complexity">Balancing model fit and complexity</h2>
+<ul>
+<li>To choose a model, we have to balance model fit (likelihood) with complexity (number of parameters)</li>
+<li>For non-nested models, two criteria are commonly used (<strong>lower is better</strong>)<ul>
+<li><a href="http://en.wikipedia.org/wiki/Akaike_information_criterion" target="_blank">Akaike&apos;s Information Criterion</a> (AIC)<ul>
+<li>$AIC = 2 k - 2 \ln (L)$</li>
+</ul>
+</li>
+<li><a href="http://en.wikipedia.org/wiki/Bayesian_information_criterion" target="_blank">Bayesian Information Criterion</a> (BIC)<ul>
+<li>$BIC = k \ln (n) - 2 \ln (L)$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>BIC favours simpler models than AIC</li>
 </ul>
 
                     

@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="6.3" data-basepath=".." data-revision="Wed May 27 2015 09:49:07 GMT+0100 (BST)">
+    <div class="book" data-level="6.3" data-basepath=".." data-revision="Wed May 27 2015 14:44:06 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1179,6 +1179,26 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="raxml-exercise">RAxML exercise</h1>
+<h2 id="load-the-libraries">Load the libraries</h2>
+<pre><code class="lang-r"><span class="hljs-keyword">library</span>(ape)
+<span class="hljs-keyword">library</span>(ips)
+</code></pre>
+<h2 id="read-in-the-data">Read in the data</h2>
+<pre><code class="lang-r">myalignment &lt;- read.dna(<span class="hljs-string">&quot;ray2000_aligned.fas&quot;</span>,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">TRUE</span>)
+</code></pre>
+<h2 id="run-raxml">Run RAxML</h2>
+<p>The <code>raxml</code> function is just a wrapper around the external program, and so this will need to be installed separately.</p>
+<pre><code class="lang-r">myalignment.rax.gtr &lt;- raxml(myalignment,
+      m=<span class="hljs-string">&quot;GTRGAMMAIX&quot;</span>, <span class="hljs-comment"># model</span>
+      f=<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-comment"># best tree and bootstrap</span>
+      p=<span class="hljs-number">1234</span>, <span class="hljs-comment"># random number seed</span>
+      x=<span class="hljs-number">2345</span>, <span class="hljs-comment"># random seed for rapid bootstrapping</span>
+      N=<span class="hljs-number">100</span>, <span class="hljs-comment"># number of bootstrap replicates</span>
+      file=<span class="hljs-string">&quot;ray2000&quot;</span>, <span class="hljs-comment"># name of output files</span>
+      exec=<span class="hljs-string">&quot;raxmlHPC-PTHREADS-SSE3&quot;</span>, <span class="hljs-comment"># name of executable</span>
+      threads=<span class="hljs-number">2</span>
+      )
+</code></pre>
 
                     
                     </section>
