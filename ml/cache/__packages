@@ -21,3 +21,10 @@ scales
 cluster
 rgl
 bios2mds
+XVector
+Biostrings
+msa
+ade4
+seqinr
+colorspace
+ips

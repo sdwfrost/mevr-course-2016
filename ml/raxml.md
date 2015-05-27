@@ -1,1 +1,35 @@
 # RAxML exercise
+
+## Load the libraries
+
+
+```r
+library(ape)
+library(ips)
+```
+
+## Read in the data
+
+
+```r
+myalignment <- read.dna("ray2000_aligned.fas",format="fasta",as.matrix=TRUE)
+```
+
+## Run RAxML
+
+The ```raxml``` function is just a wrapper around the external program, and so this will need to be installed separately.
+
+
+```r
+myalignment.rax.gtr <- raxml(myalignment,
+      m="GTRGAMMAIX", # model
+      f="a", # best tree and bootstrap
+      p=1234, # random number seed
+      x=2345, # random seed for rapid bootstrapping
+      N=100, # number of bootstrap replicates
+      file="ray2000", # name of output files
+      exec="raxmlHPC-PTHREADS-SSE3", # name of executable
+      threads=2
+      )
+```
+

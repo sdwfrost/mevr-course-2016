@@ -14,36 +14,68 @@ library(phangorn)
 Load in the sequence data and the neighbour joining tree.
 
 ```{r load_msa_tree}
-myalignment <- read.dna("myseqs_aligned_pruned.fas",format="fasta",as.matrix=TRUE)
-mytree  <- read.tree("myseqs_aligned_pruned_nj_tn93.tre")
+myalignment <- read.dna("ray2000_aligned.fas",format="fasta",as.matrix=TRUE)
+mytree  <- nj(dist.dna(myalignment,"TN93"))
 ```
 
 Now compare different models.
 
 ```{r model_test}
-myseq.phydat <- as.phyDat(myseq) # Convert to a format modeltest understand
-myseq.modeltest <- modelTest(myseq.phydat,tree=mytree,model = c("JC", "F81", "K80", "HKY", "SYM", "GTR"), G = TRUE, I = TRUE, k = 4, control = pml.control(epsilon = 1e-08, maxit = 3, trace = 1), multicore = FALSE)
-myseq.modeltest
+myalignment.phydat <- as.phyDat(myalignment) # Convert to a format modeltest understand
+myalignment.modeltest <- modelTest(myalignment.phydat,
+                             tree=mytree,
+                             model = c("JC", "F81", "K80", "HKY", "SYM", "GTR"),
+                             G = TRUE,
+                             I = TRUE,
+                             k = 4,
+                             control = pml.control(epsilon = 1e-08, maxit = 3, trace = 1),
+                             multicore = FALSE)
+myalignment.modeltest
 ```
 
-Now obtain a maximum likelihood tree, starting from the neighbour joining tree. Although this can be done all in one command, using ```optim.pml```, this shows how you can get finer control, and in principle get a tree faster.
+Using R, we can look for the model e.g. with the lowest AIC.
 
-```{r Fit GTR+I+G model}
-myseq.gtrig <- pml(mytree,myseq.phydat,model="GTR+I+G",k=4)
+```{r}
+myalignment.modeltest$Model[myalignment.modeltest$AIC==min(myalignment.modeltest$AIC)]
+```
+
+Now obtain a maximum likelihood tree, starting from the neighbour joining tree, and using the model chosen from ```modelTest```.
+
+```{r fit_model}
+myalignment.pml <- pml(mytree,myalignment.phydat,model="GTR+I+G",k=4)
 # optimise
-myseq.gtrig <- optim.pml(myseq.gtrig,optNni=TRUE,optBf=TRUE,optQ=TRUE,optInv=TRUE,optGamma=TRUE,optEdge=TRUE,optRate=TRUE)
+myalignment.pml <- optim.pml(myalignment.pml,optNni=TRUE,optBf=TRUE,optQ=TRUE,optInv=TRUE,optGamma=TRUE,optEdge=TRUE)
 # display
-myseq.gtrig
+myalignment.pml
+```
+
+This shows the maximum likelihood parameter values. The ML tree is contained in the fit as well.
+
+```{r}
+myalignment.pml$tree
+```
+
+We can compare our original tree and our new tree numerically using ```treedist```.
+
+```{r}
+treedist(myalignment.pml$tree,mytree)
+```
+
+This isn't particularly helpful. A comparison of edge lengths is quite striking.
+
+```{r}
+sum(myalignment.pml$tree$edge.length)
+sum(mytree$edge.length)
 ```
 
 Now we can perform a bootstrap, starting with our 'best' maximum likelihood tree, and performing nearest neighbour interchanges.
 
-```{r ml_bootstrap}
-myseq.gtrig.bs <- bootstrap.pml(myseq.gtrig,bs=100,trees=TRUE,optNni=TRUE)
+```{r ml_bootstrap,eval=FALSE}
+myalignment.pml.bs <- bootstrap.pml(myalignment.pml,bs=100,trees=TRUE,optNni=TRUE)
 ```
 
 As with the neighbour-joining tree, we can overlay bootstrap supports on our maximum likelihood tree.
 
-```{r plot_ml_bootstrap}
-plotBS(myseq.gtrig$tree,myseq.gtrig.bs,type="phylogram",cex=0.5)
+```{r plot_ml_bootstrap,eval=FALSE}
+plotBS(myalignment.pml$tree,myalignment.pml.bs,type="phylogram",cex=0.5)
 ```

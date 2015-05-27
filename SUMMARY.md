@@ -25,6 +25,7 @@ Course notes and exercises for 'Molecular Epidemiology of Viruses in R'.
 * [Recombination](recombination/README.md)
     * [Theory](recombination/theory.md)
     * [Practice](recombination/practice.md)
+        * [Exercise](recombination/exercise1.md)
 * [Maximum likelihood based analyses](ml/README.md)
     * [Theory](ml/theory.md)
     * [Practice](ml/practice.md)

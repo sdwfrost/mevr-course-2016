@@ -39,3 +39,12 @@
   - Gamma distribution (possibly with an additional invariant category)
   - Categorical
 
+## Balancing model fit and complexity
+
+- To choose a model, we have to balance model fit (likelihood) with complexity (number of parameters)
+- For non-nested models, two criteria are commonly used (**lower is better**)
+  - [Akaike's Information Criterion](http://en.wikipedia.org/wiki/Akaike_information_criterion) (AIC)
+    - $AIC = 2 k - 2 \ln (L)$
+  - [Bayesian Information Criterion](http://en.wikipedia.org/wiki/Bayesian_information_criterion) (BIC)
+    - $BIC = k \ln (n) - 2 \ln (L)$
+- BIC favours simpler models than AIC
