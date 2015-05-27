@@ -25,7 +25,7 @@
 ## Approaches for recombination
 
 - The best way to detect recombination depends on the pattern of recombination
-  - Single recombinant sequence
+  - Single recombinant sequence or several
   - Single breakpoint
   - Recombinant segment
 

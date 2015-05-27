@@ -6,13 +6,36 @@
 
 ## How many trees?
 
+---
+
 - How many trees are possible with 12 sequences
 - [ ] 105
 - [ ] 10,295
 - [ ] 2,027,025
 - [x] 654,729,025
 
+---
+
 ## Maximum likelihood inference
 
 - The large number of trees makes it difficult to find the tree with the highest likelihood
 - Phylogeny programs have to use heuristic approaches to find the 'best' tree
+  - Starting with an initial tree, make modifications and test whether they give a better tree or not
+    - Nearest neighbour interchange
+    - Subtree pruning and regrafting
+
+## Models of DNA evolution
+
+- Just like with distance based methods, we assume a model of sequence evolution
+- However, we can now test which is the 'best' model
+- We often don't need a good tree for this
+
+## Rate heterogeneity
+
+- In addition to assuming a model of how, for example, one nucleotide changes to another, we can also assume a model of how substitution rates overall vary across the sequence
+  - Constrained regions e.g. those that are functionally important
+  - Variable regions e.g. those under immune selection
+- Two sorts of models of rate heterogeneity
+  - Gamma distribution (possibly with an additional invariant category)
+  - Categorical
+

@@ -1,0 +1,49 @@
+# Model choice exercise
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+Load the libraries.
+
+```{r load_libraries}
+library(ape)
+library(phangorn)
+```
+
+Load in the sequence data and the neighbour joining tree.
+
+```{r load_msa_tree}
+myalignment <- read.dna("myseqs_aligned_pruned.fas",format="fasta",as.matrix=TRUE)
+mytree  <- read.tree("myseqs_aligned_pruned_nj_tn93.tre")
+```
+
+Now compare different models.
+
+```{r model_test}
+myseq.phydat <- as.phyDat(myseq) # Convert to a format modeltest understand
+myseq.modeltest <- modelTest(myseq.phydat,tree=mytree,model = c("JC", "F81", "K80", "HKY", "SYM", "GTR"), G = TRUE, I = TRUE, k = 4, control = pml.control(epsilon = 1e-08, maxit = 3, trace = 1), multicore = FALSE)
+myseq.modeltest
+```
+
+Now obtain a maximum likelihood tree, starting from the neighbour joining tree. Although this can be done all in one command, using ```optim.pml```, this shows how you can get finer control, and in principle get a tree faster.
+
+```{r Fit GTR+I+G model}
+myseq.gtrig <- pml(mytree,myseq.phydat,model="GTR+I+G",k=4)
+# optimise
+myseq.gtrig <- optim.pml(myseq.gtrig,optNni=TRUE,optBf=TRUE,optQ=TRUE,optInv=TRUE,optGamma=TRUE,optEdge=TRUE,optRate=TRUE)
+# display
+myseq.gtrig
+```
+
+Now we can perform a bootstrap, starting with our 'best' maximum likelihood tree, and performing nearest neighbour interchanges.
+
+```{r ml_bootstrap}
+myseq.gtrig.bs <- bootstrap.pml(myseq.gtrig,bs=100,trees=TRUE,optNni=TRUE)
+```
+
+As with the neighbour-joining tree, we can overlay bootstrap supports on our maximum likelihood tree.
+
+```{r plot_ml_bootstrap}
+plotBS(myseq.gtrig$tree,myseq.gtrig.bs,type="phylogram",cex=0.5)
+```

@@ -4,7 +4,9 @@
 knitr::opts_chunk$set(cache=TRUE)
 ```
 
-## Load libraries
+## Prerequisites
+
+### Load libraries
 
 ```{r}
 library(ape)
@@ -12,7 +14,6 @@ library(stepwise)
 library(magrittr)
 library(kdetrees)
 library(phangorn)
-library(bios2mds)
 source("recombination.R")
 ```
 
@@ -22,21 +23,23 @@ In addition to the libraries, I have also written some functions:
 - ```sbtest```: generates trees either side of a breakpoint, and calculates the distance between the trees
 - ```disttree```: calculates distances between all trees in a list
 
-## Set filename and outgroup
+### Set filename and outgroup
 
 ```{r}
 seqfilename <- "CRF7.fas"
 outgroup <- "J_SE7887"
 ```
 
-## Read FASTA file
+### Read FASTA file
 
 ```{r}
 seqdata <- read.dna(seqfilename,format="fasta",as.matrix=TRUE)
 seqdata
 ```
 
-## Output data with 'clean' sequence names
+### Output data with 'clean' sequence names in Phylip format
+
+Some of the tests we will use need to have sequence data in Phylip format, so we use R to convert.
 
 ```{r}
 seqdata.stepwise <- seqdata
@@ -53,25 +56,16 @@ summary(seqdata.maxchi)
 
 ## Test for recombination using phylogenetic profiling
 
+Running the same window and permutations using phylogenetic profiling.
+
 ```{r}
-seqdata.phylpro <- phylpro(paste(seqfilename,".stepwise",sep=""),breaks=seg.sites(seqdata),winHalfWidth=100,permReps=100)
+seqdata.phylpro <- phylpro(paste(seqfilename,".stepwise",sep=""),breaks=seg.sites(seqdata),winHalfWidth=50,permReps=100)
 summary(seqdata.phylpro)
 ```
 
-## Sliding window phylogeny
+## Test for recombination using a sliding window phylogeny
 
-### Making a single tree
-
-Making a tree with a sequence alignment using a distance based approach involves making a distance matrix, performing tree reconstruction, perhaps rooting the tree, and plotting it out.
-
-The R library ```magrittr``` makes this more straightforward, by introducing an operator, ```%>%```, which sends the output of one command to the next. If the second command has more than one argument, we use the placeholder ```.``` instead. In this way, we can develop a mini-pipeline.
-
-```{r}
-dist.dna(seqdata,"TN93") %>% # Make distance matrix
-  nj %>% # Neighbour joining
-  root(.,outgroup=outgroup) %>% # Root with outgroup
-  plot # Plot tree
-```
+We have already covered making a tree with a sequence alignment using a distance based approach, which involves making a distance matrix, performing tree reconstruction, perhaps rooting the tree, and plotting it out.
 
 ### Making a set of trees
 
@@ -86,7 +80,6 @@ length(seqdata.slide)
 
 This generates a list of alignments. In R, there is a command, ```lapply```, that applies a command to each element in a list. The following generates a list of distance matrices, then a list of neighbour joining trees.
 
-
 ```{r}
 seqdata.slide.nj <- lapply(seqdata.slide,dist.dna,model="TN93",as.matrix=TRUE) %>%
   lapply(.,njs)
@@ -94,10 +87,11 @@ seqdata.slide.nj <- lapply(seqdata.slide,dist.dna,model="TN93",as.matrix=TRUE) %
 
 ### Outlier detection
 
-We now have a list of trees. How do we determine whether a single tree explains all the sub-alignments? One approach is to work out whether there are 'outlying trees'. The command ```kdetrees``` computes a distribution of trees, then determines whether there are trees in the 'tail' of the distribution.
+We now have a list of trees. How do we determine whether a single tree explains all the sub-alignments? One approach is to work out whether there are 'outlying trees'. The command ```kdetrees``` computes a distribution of trees, then determines whether there are trees in the 'tail' of the distribution. This requires an outgroup sequence to root the tree.
 
 ```{r}
 seqdata.slide.nj.kde <- kdetrees(seqdata.slide.nj,outgroup=outgroup)
+seqdata.slide.nj.kde
 ```
 
 Plotting out the output from this function will show the outlying trees, as a function of the index of the tree - each of which represents the tree from a slice of the original alignment.
@@ -112,22 +106,26 @@ We can also plot out a histogram.
 hist(seqdata.slide.nj.kde)
 ```
 
-### Distances between trees
-
-Another way is to work out the distances between trees.
+Lets take two trees, one outlier, and one non-outlier.
 
 ```{r}
-seqdata.slide.treedist <- disttree(seqdata.slide.nj)
+par(mfrow=c(1,2))
+plot(seqdata.slide.nj[[200]])
+plot(seqdata.slide.nj[[600]])
 ```
+
+How are these different?
+
+The command ```cophyloplot``` in ```ape``` allows us to plot two trees face-to-face in order to compare them more easily. This function takes the two trees as arguments, plus a matrix with the associations between the labels in the two trees - this is for cases where the labels in the trees may be different (e.g. comparing host and parasite phylogenies). In our case, the labels are the same.
 
 ```{r}
-seqdata.slide.treemds <- mmds(seqdata.slide.treedist[[1]],pc=2)
-mmds.2D.plot(seqdata.slide.treemds)
+association <- matrix(c("CRF7_C54A","CRF7_C54A"),nrow=1,ncol=2)
+cophyloplot(seqdata.slide.nj[[200]],seqdata.slide.nj[[600]],assoc=association)
 ```
 
-### Single breakpoint test
+## Single breakpoint test
 
-This function splits the alignment into two (at least 300 base pairs long), and calculates the distance between the trees for either side of the breakpoint.
+A sliding window approach may be best if there are recombinant fragments, but if the sequences have a single recombinant breakpoint, then a different approach may be more powerful. This function splits the alignment into two (at least 300 base pairs long), and calculates the distance between the trees for either side of the breakpoint.
 
 ```{r}
 seqdata.sbt <- sbtest(seqdata,300,"TN93")
