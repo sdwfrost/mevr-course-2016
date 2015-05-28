@@ -30,3 +30,7 @@ XVector
 Biostrings
 msa
 seqinr
+colorspace
+ips
+phylobase
+ggplot2

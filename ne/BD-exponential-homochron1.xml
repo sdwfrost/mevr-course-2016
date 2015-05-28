@@ -1,0 +1,44 @@
+<beast version='2.0' namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>
+	<run spec="InheritanceTrajectory" samplePopulationSizes="true" simulationTime="25" verbosity="1">
+	<model spec='Model' id='model'>
+	  <population spec='Population' id='Y0' populationName='Y0'/>
+	  
+	  <reaction spec='Reaction' reactionName="beta" rate="1.25">
+			Y0:1 -> Y0:1 + Y0:1
+	  </reaction>
+	  <reaction spec='Reaction' reactionName="delta" rate="1">
+			Y0:1 -> 0
+	  </reaction>
+	</model>
+	
+	<initialState spec='InitState'>
+	  <lineageSeed spec='Individual' population='@Y0' time="0"/> 
+	</initialState>
+	
+	<populationEndCondition spec='PopulationEndCondition'
+                            threshold='0'
+                            exceedCondition='false'
+                            isRejection='true'
+                            population='@Y0'/>
+	
+	<inheritancePostProcessor spec='LineageSampler'
+        nSamples="100"
+        samplingTime="25"
+        reverseTime="false"
+    />
+    
+	
+	<output 
+		spec='NexusOutput' 
+		fileName='BD-exponential-homochronous1.nex'
+		collapseSingleChildNodes="true"
+	/>
+	<output 
+		spec='NewickOutput' 
+		fileName='BD-exponential-homochronous1.nwk'
+		collapseSingleChildNodes="true"
+	/>
+	<output spec='JsonOutput' fileName='BD-exponential-homochronous1.json'/>
+  </run>
+</beast>
+
