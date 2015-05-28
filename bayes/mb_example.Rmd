@@ -1,0 +1,93 @@
+# Getting a timetree with MrBayes
+
+## Load libraries
+
+```{r}
+library(ape)
+library(stringr)
+```
+
+## Set filenames
+
+```{r}
+myseqs.fn <- "H5N1.fas" # input file
+myseqs.nex.fn <- "H5N1.nex" # output in Nexus format
+myseqs.mb <- "H5N1_mb.nex" # output in Nexus with MrBayes block
+```
+
+## Read in data
+
+The test data are of influenza A H5N1 sequences from birds sampled in China.
+
+```{r}
+myseqs <- read.dna(myseqs.fn,format="fasta",as.matrix=FALSE)
+```
+
+## Preprocess
+
+Get sequence names and tip dates.
+
+```{r}
+myseqs.names <- names(myseqs)
+myseqs.names
+```
+
+In this case, the tip dates are the last four letters in the sequence name.
+
+```{r}
+myseqs.tipdates <- as.integer(str_sub(myseqs.names,-4))
+myseqs.tipdates
+```
+
+MrBayes requires Nexus format, with an added block giving instructions to MrBayes. We first save the data as Nexus format, and read back in to manipulate further.
+
+```{r}
+write.nexus.data(as.character(myseqs),myseqs.nex.fn,interleaved=FALSE,gap="-",missing="N")
+myseqs.nex <- readLines(myseqs.nex.fn)
+```
+
+We then write part of the MrBayes block that specifies the model.
+
+```{r}
+mbblock1 <- "
+begin mrbayes;
+  set autoclose=yes;
+  lset nst=6 rates=invgamma ngammacat=4;
+	prset statefreqpr=fixed(empirical) brlenspr=clock:uniform;
+  prset clockratepr=normal(0.00003,0.00001);
+  prset treeagepr=exponential(0.0001);
+  prset nodeagepr=calibrated;
+"
+```
+
+We calculate the ages of the tips (rather than their times), and generate another part of the block that includes the calibration points. Note that we can have ranges on the sampling times (in this case, as we have sampling to the nearest year).
+
+```{r}
+myseqs.tipages <- max(myseqs.tipdates)-myseqs.tipdates
+numseqs <- length(myseqs.tipages)
+mbblock2 <- rep("",numseqs)
+for(i in 1:numseqs){
+    tipname <- myseqs.names[i]
+    tipage <- myseqs.tipages[i]
+    mbblock2[i] <- paste("calibrate ",tipname,"=Uniform(",tipage,",",tipage+1,");",sep="")
+}
+mbblock2 <- paste(mbblock2,collapse="\n")
+```
+
+We set the MCMC parameters.
+
+```{r}
+mbblock3 <- "
+  mcmc ngen=1000000 nruns=2 nchains=2 samplefreq=1000;
+end;
+"
+```
+
+We then paste the blocks together and write to a file.
+
+```{r}
+myseqs.nexus.withmb <- paste(paste(myseqs.nex,collapse="\n"),mbblock1,mbblock2,mbblock3,sep="")
+write(myseqs.nexus.withmb,file=myseqs.mb)
+```
+
+We can now run MrBayes with the command ```mb``` with the output filename as the single argument.

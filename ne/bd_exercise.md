@@ -1,1 +1,0 @@
-# Fitting birth-death models

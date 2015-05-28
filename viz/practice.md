@@ -7,7 +7,9 @@
 
 ```r
 library(ape)
+library(ggplot2)
 library(ggtree)
+library(phylobase)
 ```
 
 ## Read in tree

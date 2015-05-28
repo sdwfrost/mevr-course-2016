@@ -1,0 +1,12 @@
+## Plot using ape
+
+The plotting function in ```ape``` only requires a single argument, the tree.
+
+```{r}
+plot(tr)
+```
+
+```{r}
+plot(tr)
+add.scale.bar()
+```

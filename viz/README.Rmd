@@ -1,0 +1,3 @@
+# Visualising trees
+
+Now that you have some trees, you want to plot them. In this section, I'll outline some of the packages that allow you to plot trees. No theory in this section, all practice!

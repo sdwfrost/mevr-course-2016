@@ -1,0 +1,207 @@
+# 'Clockifying' maximum likelihood trees
+
+```{r,echo=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+## Load the libraries
+
+```{r}
+library(ape)
+library(stringr)
+library(phangorn)
+library(magrittr)
+source("chronos.R")
+```
+
+## Preprocessing the data
+
+We need is a tree, plus how long the sequences were used to construct the tree. I will use a tree generated using ExaML, but in principle, you could use any tree, including one generated using ```optim.pml``` in ```phangorn```.
+
+```{r read_tree}
+stub <- "village_examl"
+seq.len <- 6987
+```
+
+```{r}
+tr.fn <- paste(stub,".tre",sep="")
+td.fn <- paste(stub,".td",sep="")
+tr <- read.tree(tr.fn)
+```
+
+The sample times are in the sequence names at the end.
+
+```{r}
+tipnames <- tr$tip.label
+tipdates <- tipnames %>% strsplit(.,"_",fixed=TRUE) %>% lapply(.,tail,1) %>% unlist %>% as.double
+```
+
+Now save the sequence names and tip dates to a file.
+
+```{r}
+write.table(rbind(c(length(tipnames),""),cbind(tipnames,tipdates)),td.fn,col.names=FALSE,row.names=FALSE,quote=FALSE)
+```
+
+### Root to tip regression
+
+Using the tree and the tip dates (in the same order as the tip labels in the tree), we can root the tree using ```rtt```.
+
+```{r}
+tr.rtt <- rtt(tr,tipdates)
+tr.rtt$edge.length[tr.rtt$edge.length<0.00000001] <- 0.00000001
+tr.rtt.tipnames <- tr.rtt$tip.label
+tr.rtt.tipdates <- tr.rtt.tipnames %>% strsplit(.,"_",fixed=TRUE) %>% lapply(.,tail,1) %>% unlist %>% as.double
+```
+
+Now the tree is rooted, we can calculate the evolutionary rate, as the slope of the regression of root-to-tip distances against sampling times.
+
+```{r}
+rootdistance <- distRoot(tr.rtt)
+pathlm <- lm(rootdistance~tr.rtt.tipdates)
+rate <- coef(pathlm)[2]
+rate
+```
+
+The time to the most recent common ancestor can then be obtained using the intercept term and the slope, as it is the point at which the regression line crosses zero.
+
+```{r}
+tmrca <- unname(-coef(pathlm)[1]/coef(pathlm)[2])
+tmrca
+```
+
+## Chronos
+
+For us to be able to run ```chronos```, we have to set up a quite complex calibration structure.
+
+```{r,eval=FALSE}
+max.time <- max(tipdates)
+ncat <- 1
+strict.clock.ctrl <- chronos.control(nb.rate.cat=as.integer(ncat))
+calibrating.values <- makeChronosCalib(tr)
+calibrating.values$age.min <- max.time - tmrca
+calibrating.values$age.max <- max.time - tmrca
+# pins the tips to sampling years
+calibrating.values <- rbind(calibrating.values,
+                            data.frame(node=seq(1,length(td)),
+                                       age.min=max.time - td,
+                                       age.max=max.time - td,
+                                       soft.bounds=FALSE))
+```
+
+We now set options for the model.
+
+```{r}
+ncat <- 1
+sub.rate.model <- "discrete"
+strict.clock.ctrl <- chronos.control(nb.rate.cat=as.integer(ncat))
+```
+
+We can now fit a dated tree.
+
+```{r}
+chronos.tree <- RLchronos(tr, 
+                     lambda=1, 
+                     model=sub.rate.model, 
+                     calibration=calibrating.values,
+                     control=strict.clock.ctrl,
+                     quiet=TRUE)
+```
+
+
+```{r}
+plot(chronos.tree,show.tip.label=FALSE)
+add.scale.bar()
+```
+
+We can write the tree to a file as a Newick string with ```write.tree```.
+
+```{r}
+write.tree(dated.tree,file="village_chronos.tre")
+```
+
+## Least squares dating
+
+```lsd``` is an external application, which can be run using a system call. It requires:
+
+- The filename of the tree
+- The filename of the sampling times
+- A variance parameter (default 10)
+- The sequence length
+
+```{r}
+lsd.cmd <- sprintf("lsd -i %s -d %s -c -n 1 -r -b %s -s %s -v",tr.fn,td.fn,paste(10),seq.len)
+lsd.cmd
+lsd <- system(lsd.cmd,intern=TRUE)
+```
+
+There is lots of information in the result.
+
+```{r}
+lsd
+```
+
+The following R code extracts the evolutionary rate.
+
+```{r}
+procresult <- function(fn){
+  result <- readLines(fn)
+  line <- result[grep("Tree 1 rate ",result)]
+  line.split <- strsplit(line, " ")[[1]]
+  list(rate=as.double(line.split[4]),tmrca=as.double(line.split[6]))
+}
+procresult(paste(stub,"_result.txt",sep=""))
+```
+
+We can compare this with our result from ```rtt```.
+
+```{r}
+rate
+tmrca
+```
+
+The time tree is saved with "_result_newick_date.txt" added at the end, as a Newick string.
+
+```{r}
+lsd.tree <- read.tree(paste(stub,"_result_newick_date.txt",sep=""))
+```
+
+How close is the tree to the true tree? We can compare the patristic distances between tips using ```cophenetic```.
+
+```{r}
+true.tree <- read.tree("village_true.tre")
+treedist(chronos.tree,true.tree)
+treedist(lsd.tree,true.tree)
+```
+
+Compare pairwise distances.
+
+```{r}
+true.tree.d <- cophenetic.phylo(true.tree)
+true.tree.ltri <- true.tree.d[lower.tri(true.tree.d)]
+lsd.tree.d <- cophenetic.phylo(lsd.tree)
+chronos.tree.d <- cophenetic.phylo(chronos.tree)
+```
+
+```{r}
+ids <- row.names(true.tree.d)
+idx <- match(ids,row.names(lsd.tree.d))
+lsd.tree.d2 <- lsd.tree.d[idx,idx]
+lsd.tree.d2.ltri <- lsd.tree.d2[lower.tri(lsd.tree.d2)]
+idx <- match(ids,row.names(chronos.tree.d))
+chronos.tree.d2 <- chronos.tree.d[idx,idx]
+chronos.tree.d2.ltri <- chronos.tree.d2[lower.tri(chronos.tree.d2)]
+```
+
+The LSD tree gives a very good correlation between the tip-to-tip distances.
+
+```{r}
+summary(lm(lsd.tree.d2.ltri~true.tree.ltri))
+plot(lsd.tree.d2.ltri~true.tree.ltri,xlab="True distance (years)",ylab="Inferred distance (years)",main="LSD")
+```
+
+The chronos tree captures the overall rate, but the association is lower.
+
+```{r}
+summary(lm(chronos.tree.d2.ltri~true.tree.ltri))
+plot(chronos.tree.d2.ltri~true.tree.ltri,xlab="True distance (years)",ylab="Inferred distance (years)",main="chronos")
+```
