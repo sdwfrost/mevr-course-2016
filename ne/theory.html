@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="10.1" data-basepath=".." data-revision="Thu May 28 2015 12:22:27 GMT+0100 (BST)">
+    <div class="book" data-level="10.1" data-basepath=".." data-revision="Thu May 28 2015 12:36:47 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1097,12 +1097,13 @@
 <h2 id="what-is-the-effective-population-size">What is the effective population size?</h2>
 <ul>
 <li>Not simply the number of infected individuals</li>
-<li>For simple models, <script type="math/tex; ">N_e=I \tau /2</script><ul>
-<li><script type="math/tex; ">I</script> = number of infected individuals</li>
-<li><script type="math/tex; ">\tau</script> = average time between infections in the population (&apos;generation time&apos;)</li>
+<li>For simple models</li>
 </ul>
-</li>
-<li>As both <script type="math/tex; ">I</script> <em>and</em> <script type="math/tex; ">\tau</script> change over the course of an epidemic, it is often hard to interpret <script type="math/tex; ">N_e</script> epidemiologically</li>
+<p>$N_e=I \tau /2$</p>
+<p>$I$ = number of infected individuals
+$\tau$ = average time between infections in the population (&apos;generation time&apos;)</p>
+<ul>
+<li>As both change over the course of an epidemic, it is often hard to interpret effective population size epidemiologically</li>
 <li>However, during the epidemic growth phase, the rate of change of $N_e$ reflects the exponential growth rate of infected individuals</li>
 </ul>
 <h2 id="coalescent-models-vs-birth-death-sampling-models">Coalescent models vs. birth-death-sampling models</h2>
@@ -1149,7 +1150,7 @@
 
 <script>
 require(["gitbook"], function(gitbook) {
-    var config = {"fontSettings":{"theme":null,"family":"sans","size":2},"autocover":{"title":"Molecular Epidemiology of Viruses in R","author":"Simon D.W. Frost","font":{"size":null,"family":"Impact","color":"#FFF"},"size":{"w":1800,"h":2360},"background":{"color":"#09F"}},"mathjax":{}};
+    var config = {"fontSettings":{"theme":null,"family":"sans","size":2},"autocover":{"title":"Molecular Epidemiology of Viruses in R","author":"Simon D.W. Frost","font":{"size":null,"family":"Impact","color":"#FFF"},"size":{"w":1800,"h":2360},"background":{"color":"#09F"}}};
     gitbook.start(config);
 });
 </script>
