@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="10.1" data-basepath=".." data-revision="Thu May 28 2015 14:05:21 GMT+0100 (BST)">
+    <div class="book" data-level="10.1" data-basepath=".." data-revision="Thu May 28 2015 14:13:52 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1104,12 +1104,23 @@
 <script type="math/tex; "> \tau </script> = average time between infections in the population (&apos;generation time&apos;)</p>
 <ul>
 <li>As both change over the course of an epidemic, it is often hard to interpret effective population size epidemiologically</li>
-<li>However, during the epidemic growth phase, the rate of change of $N_e$ reflects the exponential growth rate of infected individuals</li>
+<li>However, during the epidemic growth phase, the rate of change of <script type="math/tex; "> N_e </script> reflects the exponential growth rate of infected individuals</li>
 </ul>
-<h2 id="coalescent-models-vs-birth-death-sampling-models">Coalescent models vs. birth-death-sampling models</h2>
+<p><figure><img src="img/frostvolz2013_fig2.jpg" alt="Effective population size"><figcaption>Figure: Effective population size</figcaption></figure></p>
+<h2 id="coalescent-models-birth-death-sampling-models-and-beyond">Coalescent models, birth-death-sampling models, and beyond</h2>
 <ul>
-<li>Coalescent models assume the population size is changing deterministically</li>
-<li>Birth-death models allow for stochastic fluctuations in the population, but have not yet been extended to complex, nonlinear, structured populations</li>
+<li>Coalescent models assume the population size is changing deterministically<ul>
+<li>R package <code>rcolgem</code></li>
+</ul>
+</li>
+<li>Birth-death models allow for stochastic fluctuations in the population, but have not yet been extended to complex, nonlinear, structured populations<ul>
+<li>R package <code>TreePar</code></li>
+</ul>
+</li>
+<li>Stochastic epidemiological models are the most realistic, but have only been implemented for very simple cases<ul>
+<li>R package <code>expoTree</code></li>
+</ul>
+</li>
 </ul>
 
                     
