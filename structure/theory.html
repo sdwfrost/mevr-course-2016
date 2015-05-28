@@ -5,7 +5,7 @@
         <!-- head:start -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Practice | </title>
+        <title>Theory | </title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../align/example1.html" />
+    <link rel="next" href="../structure/practice.html" />
     
     
-    <link rel="prev" href="../align/theory.html" />
+    <link rel="prev" href="../structure/index.html" />
     
 
         <!-- head:end -->
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="3.2" data-basepath=".." data-revision="Thu May 28 2015 14:38:20 GMT+0100 (BST)">
+    <div class="book" data-level="11.1" data-basepath=".." data-revision="Thu May 28 2015 14:38:20 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -273,7 +273,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3.2" data-path="align/practice.html">
+        <li class="chapter " data-level="3.2" data-path="align/practice.html">
             
                 
                     <a href="../align/practice.html">
@@ -924,7 +924,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="11.1" data-path="structure/theory.html">
+        <li class="chapter active" data-level="11.1" data-path="structure/theory.html">
             
                 
                     <a href="../structure/theory.html">
@@ -1100,15 +1100,38 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="practice">Practice</h1>
-<p>There are a number of alignment packages that can be called from R.</p>
+                        <h1 id="theory">Theory</h1>
+<h2 id="introduction">Introduction</h2>
 <ul>
-<li><code>msa</code>: calls ClustalW, ClustalOmega, and MUSCLE (<a href="../GLOSSARY.html#bioconductor" class="glossary-term" title="&lt;a href=&quot;http://www.bioconductor.org&quot;&gt;Bioconductor&lt;/a&gt; provides tools for the analysis and comprehension of high-throughput genomic data. Bioconductor uses the R statistical programming language,">BioConductor</a> package)</li>
-<li><code>ips</code>: calls mafft and prank.</li>
-<li><code>ape</code>: calls ClustalW, MUSCLE, T-Coffee</li>
+<li>Often, we are interested in <em>structured populations</em><ul>
+<li>Host type</li>
+<li>Country</li>
 </ul>
-<p>In addition, alignment programs can be called via <code>system</code> calls.</p>
-<p>I will go through a worked example, showing how difficult it can sometimes be to align highly variable sequences, followed by an exercise involving simulated data, for which the true alignments are known.</p>
+</li>
+<li>We would like to be able to include this information in our analyses to ask questions such as:<ul>
+<li>When did a virus jump host?</li>
+<li>What was the geographic spread of a virus</li>
+</ul>
+</li>
+</ul>
+<h2 id="-mugration-models">&apos;Mugration&apos; models</h2>
+<ul>
+<li>Most commonly, categorical traits are modelled as if they were mutations<ul>
+<li>No association between the tree structure and the trait</li>
+</ul>
+</li>
+<li>This is for computational efficiency</li>
+<li>Can be very vulnerable to sampling biases<ul>
+<li>Example of influenza A spread and India</li>
+</ul>
+</li>
+</ul>
+<h2 id="structured-coalescent-models">Structured coalescent models</h2>
+<ul>
+<li>Structured coalescent models permit interactions between the tree structure and the trait</li>
+<li>Much slower to run</li>
+<li>More robust to sampling biases</li>
+</ul>
 
                     
                     </section>
@@ -1119,10 +1142,10 @@
         </div>
 
         
-        <a href="../align/theory.html" class="navigation navigation-prev " aria-label="Previous page: Theory"><i class="fa fa-angle-left"></i></a>
+        <a href="../structure/index.html" class="navigation navigation-prev " aria-label="Previous page: Structured populations"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../align/example1.html" class="navigation navigation-next " aria-label="Next page: Nucleotide alignment"><i class="fa fa-angle-right"></i></a>
+        <a href="../structure/practice.html" class="navigation navigation-next " aria-label="Next page: Practice"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
@@ -1148,7 +1171,7 @@
 
 <script>
 require(["gitbook"], function(gitbook) {
-    var config = {"fontSettings":{"theme":null,"family":"sans","size":2},"autocover":{"title":"Molecular Epidemiology of Viruses in R","author":"Simon D.W. Frost","font":{"size":null,"family":"Impact","color":"#FFF"},"size":{"w":1800,"h":2360},"background":{"color":"#09F"}}};
+    var config = {"fontSettings":{"theme":null,"family":"sans","size":2},"autocover":{"title":"Molecular Epidemiology of Viruses in R","author":"Simon D.W. Frost","font":{"size":null,"family":"Impact","color":"#FFF"},"size":{"w":1800,"h":2360},"background":{"color":"#09F"}},"mathjax":{}};
     gitbook.start(config);
 });
 </script>
