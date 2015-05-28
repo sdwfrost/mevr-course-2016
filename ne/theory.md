@@ -10,10 +10,10 @@
 ## What is the effective population size?
 
 - Not simply the number of infected individuals
-- For simple models, $N_e=I \tau /2$
-  - $I$ = number of infected individuals
-  - $\tau$ = average time between infections in the population ('generation time')
-- As both $I$ *and* $\tau$ change over the course of an epidemic, it is often hard to interpret $N_e$ epidemiologically
+- For simple models, $$N_e=I \tau /2$$
+  - $$I$$ = number of infected individuals
+  - $$\tau$$ = average time between infections in the population ('generation time')
+- As both $$I$$ *and* $$\tau$$ change over the course of an epidemic, it is often hard to interpret $$N_e$$ epidemiologically
 - However, during the epidemic growth phase, the rate of change of $N_e$ reflects the exponential growth rate of infected individuals
 
 ## Coalescent models vs. birth-death-sampling models
