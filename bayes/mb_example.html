@@ -5,7 +5,7 @@
         <!-- head:start -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Practice | </title>
+        <title>MrBayes example | </title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../ne/example1.html" />
+    <link rel="next" href="../ne/index.html" />
     
     
-    <link rel="prev" href="../ne/theory.html" />
+    <link rel="prev" href="../bayes/practice.html" />
     
 
         <!-- head:end -->
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="10.2" data-basepath=".." data-revision="Thu May 28 2015 11:12:04 GMT+0100 (BST)">
+    <div class="book" data-level="9.2.1" data-basepath=".." data-revision="Thu May 28 2015 11:12:04 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -796,7 +796,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="9.2.1" data-path="bayes/mb_example.html">
+        <li class="chapter active" data-level="9.2.1" data-path="bayes/mb_example.html">
             
                 
                     <a href="../bayes/mb_example.html">
@@ -852,7 +852,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="10.2" data-path="ne/practice.html">
+        <li class="chapter " data-level="10.2" data-path="ne/practice.html">
             
                 
                     <a href="../ne/practice.html">
@@ -1084,29 +1084,92 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="practice">Practice</h1>
-<h2 id="introduction">Introduction</h2>
-<ul>
-<li>In the BEAST software package, there are many models of changing effective population size that can be fitted</li>
-<li>Parametric models<ul>
-<li>Exponential growth</li>
-<li>Logistic growth</li>
-</ul>
-</li>
-<li>Nonparametric models<ul>
-<li>&apos;Skyline&apos;, &apos;skyride&apos; models</li>
-</ul>
-</li>
-</ul>
-<h2 id="fitting-models-to-a-single-tree">Fitting models to a single tree</h2>
-<ul>
-<li>We will fit a model to a single tree<ul>
-<li>Tree from chronos/LSD</li>
-<li>One of the trees from a MrBayes run</li>
-</ul>
-</li>
-<li>This is a fast, exploratory procedure</li>
-</ul>
+                        <h1 id="getting-a-timetree-with-mrbayes">Getting a timetree with MrBayes</h1>
+<h2 id="load-libraries">Load libraries</h2>
+<pre><code class="lang-r"><span class="hljs-keyword">library</span>(ape)
+<span class="hljs-keyword">library</span>(stringr)
+</code></pre>
+<h2 id="set-filenames">Set filenames</h2>
+<pre><code class="lang-r">myseqs.fn &lt;- <span class="hljs-string">&quot;H5N1.fas&quot;</span> <span class="hljs-comment"># input file</span>
+myseqs.nex.fn &lt;- <span class="hljs-string">&quot;H5N1.nex&quot;</span> <span class="hljs-comment"># output in Nexus format</span>
+myseqs.mb &lt;- <span class="hljs-string">&quot;H5N1_mb.nex&quot;</span> <span class="hljs-comment"># output in Nexus with MrBayes block</span>
+</code></pre>
+<h2 id="read-in-data">Read in data</h2>
+<p>The test data are of influenza A H5N1 sequences from birds sampled in China.</p>
+<pre><code class="lang-r">myseqs &lt;- read.dna(myseqs.fn,format=<span class="hljs-string">&quot;<a href="../GLOSSARY.html#fasta" class="glossary-term" title="A widely used sequence format, which has a sequence label beginning with &apos;&gt;&apos;, followed by the sequence.">fasta</a>&quot;</span>,as.matrix=<span class="hljs-literal">FALSE</span>)
+</code></pre>
+<h2 id="preprocess">Preprocess</h2>
+<p>Get sequence names and tip dates.</p>
+<pre><code class="lang-r">myseqs.names &lt;- names(myseqs)
+myseqs.names
+</code></pre>
+<pre><code>##  [1] &quot;A_chicken_Fujian_1042_2005&quot;    &quot;A_duck_Fujian_897_2005&quot;       
+##  [3] &quot;A_duck_Fujian_13_2002&quot;         &quot;A_swine_Fujian_F1_2001&quot;       
+##  [5] &quot;A_Chicken_Guangdong_810_2005&quot;  &quot;A_goose_Guangdong_2216_2005&quot;  
+##  [7] &quot;A_chicken_Guangdong_174_2004&quot;  &quot;A_chicken_Guangdong_191_2004&quot; 
+##  [9] &quot;A_duck_Guangdong_4610_2003&quot;    &quot;A_duck_Guangdong_01_2001&quot;     
+## [11] &quot;A_duck_Guangdong_12_2000&quot;      &quot;A_Goose_Guangdong_1_1996&quot;     
+## [13] &quot;A_duck_Guangxi_793_2005&quot;       &quot;A_goose_Guangxi_345_2005&quot;     
+## [15] &quot;A_chicken_Guangxi_2439_2004&quot;   &quot;A_chicken_Guangxi_2461_2004&quot;  
+## [17] &quot;A_duck_Guangxi_1378_2004&quot;      &quot;A_duck_Guangxi_1681_2004&quot;     
+## [19] &quot;A_duck_Guangxi_2291_2004&quot;      &quot;A_duck_Guangxi_351_2004&quot;      
+## [21] &quot;A_goose_Guangxi_1097_2004&quot;     &quot;A_goose_Guangxi_2112_2004&quot;    
+## [23] &quot;A_goose_Guangxi_914_2004&quot;      &quot;A_duck_Guangxi_22_2001&quot;       
+## [25] &quot;A_duck_Guangxi_50_2001&quot;        &quot;A_greyheron_HongKong_837_2004&quot;
+## [27] &quot;A_bird_HongKong_213_2003&quot;      &quot;A_chicken_HongKong_863_2002&quot;  
+## [29] &quot;A_bird_HongKong_97_1998&quot;       &quot;A_chicken_HongKong_258_1997&quot;  
+## [31] &quot;A_chicken_HongKong_915_1997&quot;   &quot;A_Goose_HongKong_w355_1997&quot;   
+## [33] &quot;A_bird_HongKong_481_1997&quot;      &quot;A_bird_HongKong_485_1997&quot;     
+## [35] &quot;A_bird_HongKong_488_1997&quot;      &quot;A_bird_HongKong_503_1997&quot;     
+## [37] &quot;A_bird_HongKong_514_1997&quot;      &quot;A_bird_HongKong_532_1997&quot;     
+## [39] &quot;A_bird_HongKong_542_1997&quot;      &quot;A_duck_Hunan_1265_2005&quot;       
+## [41] &quot;A_duck_Hunan_139_2005&quot;         &quot;A_duck_Hunan_157_2005&quot;        
+## [43] &quot;A_duck_Hunan_182_2005&quot;
+</code></pre><p>In this case, the tip dates are the last four letters in the sequence name.</p>
+<pre><code class="lang-r">myseqs.tipdates &lt;- as.integer(str_sub(myseqs.names,-<span class="hljs-number">4</span>))
+myseqs.tipdates
+</code></pre>
+<pre><code>##  [1] 2005 2005 2002 2001 2005 2005 2004 2004 2003 2001 2000 1996 2005 2005
+## [15] 2004 2004 2004 2004 2004 2004 2004 2004 2004 2001 2001 2004 2003 2002
+## [29] 1998 1997 1997 1997 1997 1997 1997 1997 1997 1997 1997 2005 2005 2005
+## [43] 2005
+</code></pre><p>MrBayes requires Nexus format, with an added block giving instructions to MrBayes. We first save the data as Nexus format, and read back in to manipulate further.</p>
+<pre><code class="lang-r">write.nexus.data(as.character(myseqs),myseqs.nex.fn,interleaved=<span class="hljs-literal">FALSE</span>,gap=<span class="hljs-string">&quot;-&quot;</span>,missing=<span class="hljs-string">&quot;N&quot;</span>)
+myseqs.nex &lt;- readLines(myseqs.nex.fn)
+</code></pre>
+<p>We then write part of the MrBayes block that specifies the model.</p>
+<pre><code class="lang-r">mbblock1 &lt;- <span class="hljs-string">&quot;
+begin mrbayes;
+  set autoclose=yes;
+  lset nst=6 rates=invgamma ngammacat=4;
+    prset statefreqpr=fixed(empirical) brlenspr=clock:uniform;
+  prset clockratepr=normal(0.00003,0.00001);
+  prset treeagepr=exponential(0.0001);
+  prset nodeagepr=calibrated;
+&quot;</span>
+</code></pre>
+<p>We calculate the ages of the tips (rather than their times), and generate another part of the block that includes the calibration points. Note that we can have ranges on the sampling times (in this case, as we have sampling to the nearest year).</p>
+<pre><code class="lang-r">myseqs.tipages &lt;- max(myseqs.tipdates)-myseqs.tipdates
+numseqs &lt;- length(myseqs.tipages)
+mbblock2 &lt;- rep(<span class="hljs-string">&quot;&quot;</span>,numseqs)
+<span class="hljs-keyword">for</span>(i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:numseqs){
+    tipname &lt;- myseqs.names[i]
+    tipage &lt;- myseqs.tipages[i]
+    mbblock2[i] &lt;- paste(<span class="hljs-string">&quot;calibrate &quot;</span>,tipname,<span class="hljs-string">&quot;=Uniform(&quot;</span>,tipage,<span class="hljs-string">&quot;,&quot;</span>,tipage+<span class="hljs-number">1</span>,<span class="hljs-string">&quot;);&quot;</span>,sep=<span class="hljs-string">&quot;&quot;</span>)
+}
+mbblock2 &lt;- paste(mbblock2,collapse=<span class="hljs-string">&quot;\n&quot;</span>)
+</code></pre>
+<p>We set the MCMC parameters.</p>
+<pre><code class="lang-r">mbblock3 &lt;- <span class="hljs-string">&quot;
+  mcmc ngen=1000000 nruns=2 nchains=2 samplefreq=1000;
+end;
+&quot;</span>
+</code></pre>
+<p>We then paste the blocks together and write to a file.</p>
+<pre><code class="lang-r">myseqs.nexus.withmb &lt;- paste(paste(myseqs.nex,collapse=<span class="hljs-string">&quot;\n&quot;</span>),mbblock1,mbblock2,mbblock3,sep=<span class="hljs-string">&quot;&quot;</span>)
+write(myseqs.nexus.withmb,file=myseqs.mb)
+</code></pre>
+<p>We can now run MrBayes with the command <code>mb</code> with the output filename as the single argument.</p>
 
                     
                     </section>
@@ -1117,10 +1180,10 @@
         </div>
 
         
-        <a href="../ne/theory.html" class="navigation navigation-prev " aria-label="Previous page: Theory"><i class="fa fa-angle-left"></i></a>
+        <a href="../bayes/practice.html" class="navigation navigation-prev " aria-label="Previous page: Practice"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../ne/example1.html" class="navigation navigation-next " aria-label="Next page: Fitting skyline"><i class="fa fa-angle-right"></i></a>
+        <a href="../ne/index.html" class="navigation navigation-next " aria-label="Next page: Effective population size estimation"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

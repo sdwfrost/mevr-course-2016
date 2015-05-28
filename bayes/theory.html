@@ -5,7 +5,7 @@
         <!-- head:start -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Practice | </title>
+        <title>Theory | </title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../ne/example1.html" />
+    <link rel="next" href="../bayes/practice.html" />
     
     
-    <link rel="prev" href="../ne/theory.html" />
+    <link rel="prev" href="../bayes/index.html" />
     
 
         <!-- head:end -->
@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="10.2" data-basepath=".." data-revision="Thu May 28 2015 11:12:04 GMT+0100 (BST)">
+    <div class="book" data-level="9.1" data-basepath=".." data-revision="Thu May 28 2015 11:12:04 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -765,7 +765,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="9.1" data-path="bayes/theory.html">
+        <li class="chapter active" data-level="9.1" data-path="bayes/theory.html">
             
                 
                     <a href="../bayes/theory.html">
@@ -852,7 +852,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="10.2" data-path="ne/practice.html">
+        <li class="chapter " data-level="10.2" data-path="ne/practice.html">
             
                 
                     <a href="../ne/practice.html">
@@ -1084,28 +1084,36 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="practice">Practice</h1>
+                        <h1 id="bayesian-inference-of-time-trees">Bayesian inference of time trees</h1>
 <h2 id="introduction">Introduction</h2>
 <ul>
-<li>In the BEAST software package, there are many models of changing effective population size that can be fitted</li>
-<li>Parametric models<ul>
-<li>Exponential growth</li>
-<li>Logistic growth</li>
+<li>Bayesian inference tries to obtain a probability distribution rather than a single best fit c.f. maximum likelihood</li>
+<li>This is typically obtained using numerical approaches such as Markov Chain Monte Carlo</li>
+<li>For example, Metropolis sampling involves the following<ul>
+<li>Make a change to the parameters</li>
+<li>If the new parameters result in a better fit, change to them</li>
+<li>If the new parameters result in a worse fit, move to them with a probability based on the drop in fit</li>
+<li>Repeat many times</li>
 </ul>
 </li>
-<li>Nonparametric models<ul>
-<li>&apos;Skyline&apos;, &apos;skyride&apos; models</li>
 </ul>
-</li>
-</ul>
-<h2 id="fitting-models-to-a-single-tree">Fitting models to a single tree</h2>
+<h2 id="strict-and-molecular-clocks">Strict and molecular clocks</h2>
 <ul>
-<li>We will fit a model to a single tree<ul>
-<li>Tree from chronos/LSD</li>
-<li>One of the trees from a MrBayes run</li>
+<li>In phylogenetic inference, Bayesian approaches have become popular to fit molecular clocks to sequence data</li>
+<li>Two commonly used platforms<ul>
+<li>MrBayes</li>
+<li>BEAST</li>
 </ul>
 </li>
-<li>This is a fast, exploratory procedure</li>
+<li>Both use the same underlying principles, but the models are parameterised a little differently<ul>
+<li>BEAST has a wide range of &apos;demographic models&apos; that can be used as prior distributions for the branch lengths</li>
+</ul>
+</li>
+<li>The input is also different<ul>
+<li>BEAST has an XML input format</li>
+<li>MrBayes uses the Nexus format</li>
+</ul>
+</li>
 </ul>
 
                     
@@ -1117,10 +1125,10 @@
         </div>
 
         
-        <a href="../ne/theory.html" class="navigation navigation-prev " aria-label="Previous page: Theory"><i class="fa fa-angle-left"></i></a>
+        <a href="../bayes/index.html" class="navigation navigation-prev " aria-label="Previous page: Bayesian reconstruction of time trees"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../ne/example1.html" class="navigation navigation-next " aria-label="Next page: Fitting skyline"><i class="fa fa-angle-right"></i></a>
+        <a href="../bayes/practice.html" class="navigation navigation-next " aria-label="Next page: Practice"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
