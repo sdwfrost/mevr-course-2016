@@ -1,0 +1,25 @@
+LEAST-SQUARE METHODS TO ESTIMATE RATES AND DATES - 0.1 
+
+
+Input files:
+  I                                 Input tree file : H5N1.tre
+  D                                 Input date file : H5N1.td
+Output file:
+  O                                    Output file  : H5N1_result.txt
+Parameters:
+  S                                 Sequence Length : 6987
+  C                                With constraints : Yes
+  T                        Lower bound for the rate : 0.000010
+  V                                  With variances : Yes
+  B                          Parameter of variances : 10.000000
+  R                               Estimate the root : Yes
+  W                         Given substitution rate : No
+  G                                Remove outgroups : No
+  N                               Multiple data set : No
+
+  H to print Help 
+  Y to accept or type a letter to change an option (Q = Exit) 
+Tree 1 rate 0.003233 tMRCA 1994.112857 objective_function 0.037002
+
+*********************************************************
+Elapsed time: 0.01 seconds

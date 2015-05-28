@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="11.2.1" data-basepath=".." data-revision="Thu May 28 2015 12:36:47 GMT+0100 (BST)">
+    <div class="book" data-level="11.2.1" data-basepath=".." data-revision="Thu May 28 2015 13:49:48 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -1171,8 +1171,9 @@ myseqs.gtrig &lt;- pml(mytree,myseqs.phydat,model=<span class="hljs-string">&quo
 ## optimize edge weights:  -5704.652 --&gt; -5704.652
 </code></pre><pre><code class="lang-r">myseqs.mltree &lt;- myseqs.gtrig$tree
 </code></pre>
-<p>We need to root the tree in order to do ancestral reconstruction. We use <code>rtt</code>, but in principle, we could use any method we discussed before. We scan the names of the tip labels, to get the tip dates and location.</p>
+<p>We need to root the tree in order to do ancestral reconstruction. We could use <code>rtt</code> or <code>lsd</code>, but in principle, we could use any method we discussed before. We scan the names of the tip labels, to get the tip dates and location.</p>
 <pre><code class="lang-r">info &lt;- scan(what=list(character(),character(),character(),character(),integer()),sep=<span class="hljs-string">&quot;_&quot;</span>,quote=<span class="hljs-string">&quot;\&quot;&quot;</span>,text=paste(myseqs.mltree$tip.label,collapse=<span class="hljs-string">&quot;\n&quot;</span>),quiet=<span class="hljs-literal">TRUE</span>)
+tipnames &lt;- myseqs.mltree$tip.label
 tipdates &lt;- as.double(info[[<span class="hljs-number">5</span>]])
 tipdates
 </code></pre>
@@ -1180,34 +1181,101 @@ tipdates
 ## [15] 2004 2004 2004 2004 2004 2004 2004 2004 2004 2001 2001 2004 2003 2002
 ## [29] 1998 1997 1997 1997 1997 1997 1997 1997 1997 1997 1997 2005 2005 2005
 ## [43] 2005
-</code></pre><p>Now we can root with <code>rtt</code>.</p>
-<pre><code class="lang-r">myseqs.mltree.rooted &lt;- rtt(myseqs.mltree,tipdates)
+</code></pre><p>We can now root the tree and turn branch lengths into time using LSD.</p>
+<pre><code class="lang-r">write.tree(myseqs.mltree,<span class="hljs-string">&quot;H5N1.tre&quot;</span>)
+write.table(rbind(c(length(tipnames),<span class="hljs-string">&quot;&quot;</span>),cbind(tipnames,tipdates)),<span class="hljs-string">&quot;H5N1.td&quot;</span>,col.names=<span class="hljs-literal">FALSE</span>,row.names=<span class="hljs-literal">FALSE</span>,quote=<span class="hljs-literal">FALSE</span>)
 </code></pre>
-<p>Now we can extract the location, and reconstruct the changes in state.</p>
-<pre><code class="lang-r">info &lt;- scan(what=list(character(),character(),character(),character(),integer()),sep=<span class="hljs-string">&quot;_&quot;</span>,quote=<span class="hljs-string">&quot;\&quot;&quot;</span>,text=paste(myseqs.mltree.rooted$tip.label,collapse=<span class="hljs-string">&quot;\n&quot;</span>),quiet=<span class="hljs-literal">TRUE</span>)
-mylocation &lt;- as.factor(info[[<span class="hljs-number">3</span>]])
+<pre><code class="lang-r">lsd.cmd &lt;- sprintf(<span class="hljs-string">&quot;lsd -i %s -d %s -c -n 1 -r -b %s -s %s -v&quot;</span>,<span class="hljs-string">&quot;H5N1.tre&quot;</span>,<span class="hljs-string">&quot;H5N1.td&quot;</span>,paste(<span class="hljs-number">10</span>),seq.len)
+lsd.cmd
+</code></pre>
+<pre><code>## [1] &quot;lsd -i H5N1.tre -d H5N1.td -c -n 1 -r -b 10 -s 6987 -v&quot;
+</code></pre><pre><code class="lang-r">lsd &lt;- system(lsd.cmd,intern=<span class="hljs-literal">TRUE</span>)
+</code></pre>
+<pre><code class="lang-r">procresult &lt;- <span class="hljs-keyword">function</span>(fn){
+  result &lt;- readLines(fn)
+  line &lt;- result[grep(<span class="hljs-string">&quot;Tree 1 rate &quot;</span>,result)]
+  line.split &lt;- strsplit(line, <span class="hljs-string">&quot; &quot;</span>)[[<span class="hljs-number">1</span>]]
+  list(rate=as.double(line.split[<span class="hljs-number">4</span>]),tmrca=as.double(line.split[<span class="hljs-number">6</span>]))
+}
+procresult(<span class="hljs-string">&quot;H5N1_result.txt&quot;</span>)
+</code></pre>
+<pre><code>## $rate
+## [1] 0.003233
+## 
+## $tmrca
+## [1] 1994.113
+</code></pre><pre><code class="lang-r">lsd.tree &lt;- read.tree(<span class="hljs-string">&quot;H5N1_result_newick_date.txt&quot;</span>)
+</code></pre>
+<p>Now we can extract the location, and reconstruct the changes in state. Here is another R trick to parse sequence headers.</p>
+<pre><code class="lang-r">info &lt;- scan(what=list(character(),character(),character(),character(),integer()),sep=<span class="hljs-string">&quot;_&quot;</span>,quote=<span class="hljs-string">&quot;\&quot;&quot;</span>,text=paste(lsd.tree$tip.label,collapse=<span class="hljs-string">&quot;\n&quot;</span>),quiet=<span class="hljs-literal">TRUE</span>)
+info
+</code></pre>
+<pre><code>## [[1]]
+##  [1] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+## [18] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+## [35] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+## 
+## [[2]]
+##  [1] &quot;chicken&quot;   &quot;Goose&quot;     &quot;bird&quot;      &quot;bird&quot;      &quot;bird&quot;     
+##  [6] &quot;bird&quot;      &quot;bird&quot;      &quot;chicken&quot;   &quot;bird&quot;      &quot;bird&quot;     
+## [11] &quot;bird&quot;      &quot;duck&quot;      &quot;goose&quot;     &quot;goose&quot;     &quot;goose&quot;    
+## [16] &quot;duck&quot;      &quot;duck&quot;      &quot;chicken&quot;   &quot;swine&quot;     &quot;chicken&quot;  
+## [21] &quot;duck&quot;      &quot;goose&quot;     &quot;goose&quot;     &quot;duck&quot;      &quot;chicken&quot;  
+## [26] &quot;duck&quot;      &quot;Chicken&quot;   &quot;greyheron&quot; &quot;duck&quot;      &quot;duck&quot;     
+## [31] &quot;duck&quot;      &quot;duck&quot;      &quot;chicken&quot;   &quot;chicken&quot;   &quot;bird&quot;     
+## [36] &quot;duck&quot;      &quot;chicken&quot;   &quot;duck&quot;      &quot;duck&quot;      &quot;duck&quot;     
+## [41] &quot;duck&quot;      &quot;duck&quot;      &quot;Goose&quot;    
+## 
+## [[3]]
+##  [1] &quot;HongKong&quot;  &quot;HongKong&quot;  &quot;HongKong&quot;  &quot;HongKong&quot;  &quot;HongKong&quot; 
+##  [6] &quot;HongKong&quot;  &quot;HongKong&quot;  &quot;HongKong&quot;  &quot;HongKong&quot;  &quot;HongKong&quot; 
+## [11] &quot;HongKong&quot;  &quot;Guangxi&quot;   &quot;Guangxi&quot;   &quot;Guangxi&quot;   &quot;Guangxi&quot;  
+## [16] &quot;Guangxi&quot;   &quot;Guangxi&quot;   &quot;Guangxi&quot;   &quot;Fujian&quot;    &quot;Fujian&quot;   
+## [21] &quot;Fujian&quot;    &quot;Guangdong&quot; &quot;Guangxi&quot;   &quot;Hunan&quot;     &quot;Guangxi&quot;  
+## [26] &quot;Guangxi&quot;   &quot;Guangdong&quot; &quot;HongKong&quot;  &quot;Guangxi&quot;   &quot;Hunan&quot;    
+## [31] &quot;Hunan&quot;     &quot;Hunan&quot;     &quot;Guangdong&quot; &quot;Guangdong&quot; &quot;HongKong&quot; 
+## [36] &quot;Guangxi&quot;   &quot;HongKong&quot;  &quot;Guangdong&quot; &quot;Guangdong&quot; &quot;Guangxi&quot;  
+## [41] &quot;Fujian&quot;    &quot;Guangdong&quot; &quot;Guangdong&quot;
+## 
+## [[4]]
+##  [1] &quot;915&quot;  &quot;w355&quot; &quot;488&quot;  &quot;97&quot;   &quot;481&quot;  &quot;485&quot;  &quot;514&quot;  &quot;258&quot;  &quot;503&quot;  &quot;542&quot; 
+## [11] &quot;532&quot;  &quot;1378&quot; &quot;914&quot;  &quot;1097&quot; &quot;2112&quot; &quot;2291&quot; &quot;1681&quot; &quot;2439&quot; &quot;F1&quot;   &quot;1042&quot;
+## [21] &quot;897&quot;  &quot;2216&quot; &quot;345&quot;  &quot;1265&quot; &quot;2461&quot; &quot;793&quot;  &quot;810&quot;  &quot;837&quot;  &quot;351&quot;  &quot;139&quot; 
+## [31] &quot;182&quot;  &quot;157&quot;  &quot;191&quot;  &quot;174&quot;  &quot;213&quot;  &quot;50&quot;   &quot;863&quot;  &quot;4610&quot; &quot;01&quot;   &quot;22&quot;  
+## [41] &quot;13&quot;   &quot;12&quot;   &quot;1&quot;   
+## 
+## [[5]]
+##  [1] 1997 1997 1997 1998 1997 1997 1997 1997 1997 1997 1997 2004 2004 2004
+## [15] 2004 2004 2004 2004 2001 2005 2005 2005 2005 2005 2004 2005 2005 2004
+## [29] 2004 2005 2005 2005 2004 2004 2003 2001 2002 2003 2001 2001 2002 2000
+## [43] 1996
+</code></pre><p>The location is the third entry in the list.</p>
+<pre><code class="lang-r">mylocation &lt;- as.factor(info[[<span class="hljs-number">3</span>]])
 mylocation
 </code></pre>
-<pre><code>##  [1] Fujian    Fujian    Fujian    Fujian    Guangdong Guangdong Guangdong
-##  [8] Guangdong Guangdong Guangdong Guangdong Guangdong Guangxi   Guangxi  
-## [15] Guangxi   Guangxi   Guangxi   Guangxi   Guangxi   Guangxi   Guangxi  
-## [22] Guangxi   Guangxi   Guangxi   Guangxi   HongKong  HongKong  HongKong 
-## [29] HongKong  HongKong  HongKong  HongKong  HongKong  HongKong  HongKong 
-## [36] HongKong  HongKong  HongKong  HongKong  Hunan     Hunan     Hunan    
-## [43] Hunan    
+<pre><code>##  [1] HongKong  HongKong  HongKong  HongKong  HongKong  HongKong  HongKong 
+##  [8] HongKong  HongKong  HongKong  HongKong  Guangxi   Guangxi   Guangxi  
+## [15] Guangxi   Guangxi   Guangxi   Guangxi   Fujian    Fujian    Fujian   
+## [22] Guangdong Guangxi   Hunan     Guangxi   Guangxi   Guangdong HongKong 
+## [29] Guangxi   Hunan     Hunan     Hunan     Guangdong Guangdong HongKong 
+## [36] Guangxi   HongKong  Guangdong Guangdong Guangxi   Fujian    Guangdong
+## [43] Guangdong
 ## Levels: Fujian Guangdong Guangxi HongKong Hunan
-</code></pre><pre><code class="lang-r">myseqs.mltree.rooted$edge.length[myseqs.mltree.rooted$edge.length&lt;<span class="hljs-number">0.00000001</span>] &lt;- <span class="hljs-number">0.00000001</span>
-myseqs.ace &lt;- ace(mylocation,myseqs.mltree.rooted,type=<span class="hljs-string">&quot;discrete&quot;</span>,method=<span class="hljs-string">&quot;ML&quot;</span>,model=<span class="hljs-string">&quot;ER&quot;</span>)
+</code></pre><p>We fix any small branch lengths.</p>
+<pre><code class="lang-r">lsd.tree$edge.length[lsd.tree$edge.length&lt;<span class="hljs-number">0.00000001</span>] &lt;- <span class="hljs-number">0.00000001</span>
 </code></pre>
-<pre><code class="lang-r">myseqs.ace
+<p>Now perform ancestral reconstruction of the location; I use a simple equal rates model (<code>model=&quot;ER&quot;</code>), although in principle I could use more complex ones.</p>
+<pre><code class="lang-r">lsd.tree.ace &lt;- ace(mylocation,lsd.tree,type=<span class="hljs-string">&quot;discrete&quot;</span>,method=<span class="hljs-string">&quot;ML&quot;</span>,model=<span class="hljs-string">&quot;ER&quot;</span>)
+</code></pre>
+<pre><code class="lang-r">lsd.tree.ace
 </code></pre>
 <pre><code>## 
 ##     Ancestral Character Estimation
 ## 
-## Call: ace(x = mylocation, phy = myseqs.mltree.rooted, type = &quot;discrete&quot;, 
-##     method = &quot;ML&quot;, model = &quot;ER&quot;)
+## Call: ace(x = mylocation, phy = lsd.tree, type = &quot;discrete&quot;, method = &quot;ML&quot;, 
+##     model = &quot;ER&quot;)
 ## 
-##     Log-likelihood: -45.95053 
+##     Log-likelihood: -45.57865 
 ## 
 ## Rate index matrix:
 ##           Fujian Guangdong Guangxi HongKong Hunan
@@ -1219,17 +1287,23 @@ myseqs.ace &lt;- ace(mylocation,myseqs.mltree.rooted,type=<span class="hljs-stri
 ## 
 ## Parameter estimates:
 ##  rate index estimate std-err
-##           1  19.4038  4.0889
+##           1   0.0701  0.0151
 ## 
 ## Scaled likelihoods at the root (type &apos;...$lik.anc&apos; to get them for all nodes):
-##       Fujian    Guangdong      Guangxi     HongKong        Hunan 
-## 1.335464e-05 1.248930e-05 9.999497e-01 1.231242e-05 1.216222e-05
-</code></pre><pre><code class="lang-r">plot(myseqs.mltree.rooted, type=<span class="hljs-string">&quot;p&quot;</span>,label.offset=<span class="hljs-number">0.0025</span>,cex=<span class="hljs-number">0.75</span>)
+##     Fujian  Guangdong    Guangxi   HongKong      Hunan 
+## 0.02836587 0.20304071 0.02992778 0.71128212 0.02738351
+</code></pre><pre><code class="lang-r">plot(lsd.tree, type=<span class="hljs-string">&quot;p&quot;</span>,label.offset=<span class="hljs-number">0.0025</span>,cex=<span class="hljs-number">0.75</span>)
 co &lt;- c(<span class="hljs-string">&quot;blue&quot;</span>, <span class="hljs-string">&quot;yellow&quot;</span>,<span class="hljs-string">&quot;red&quot;</span>,<span class="hljs-string">&quot;green&quot;</span>,<span class="hljs-string">&quot;orange&quot;</span>)
 tiplabels(pch = <span class="hljs-number">22</span>, bg = co[as.numeric(mylocation)], cex = <span class="hljs-number">1.0</span>)
-nodelabels(thermo = myseqs.ace$lik.anc, piecol = co, cex = <span class="hljs-number">0.25</span>)
+nodelabels(thermo = lsd.tree.ace$lik.anc, piecol = co, cex = <span class="hljs-number">0.25</span>)
 </code></pre>
-<p><figure><img src="figure/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6"><figcaption>Figure: plot of chunk unnamed-chunk-6</figcaption></figure> </p>
+<p><figure><img src="figure/unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11"><figcaption>Figure: plot of chunk unnamed-chunk-11</figcaption></figure> </p>
+<p>The next steps in this analysis could be:</p>
+<ul>
+<li>To explore different possible models for the migration process</li>
+<li>To perform a joint trait/tree analysis in BEAST (see <a href="https://github.com/sdwfrost/influenza-dynamics-practical-h5n1" target="_blank">here</a> for an analysis of the same data)</li>
+<li>To develop more complex structured coalescent models e.g. in <code>rcolgem</code></li>
+</ul>
 
                     
                     </section>
