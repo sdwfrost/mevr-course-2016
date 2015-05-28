@@ -116,11 +116,12 @@ myseqs.gtrig <- optim.pml(myseqs.gtrig,optNni=TRUE,optBf=TRUE,optQ=TRUE,optInv=T
 myseqs.mltree <- myseqs.gtrig$tree
 ```
 
-We need to root the tree in order to do ancestral reconstruction. We use ```rtt```, but in principle, we could use any method we discussed before. We scan the names of the tip labels, to get the tip dates and location.
+We need to root the tree in order to do ancestral reconstruction. We could use ```rtt``` or ```lsd```, but in principle, we could use any method we discussed before. We scan the names of the tip labels, to get the tip dates and location.
 
 
 ```r
 info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(myseqs.mltree$tip.label,collapse="\n"),quiet=TRUE)
+tipnames <- myseqs.mltree$tip.label
 tipdates <- as.double(info[[5]])
 tipdates
 ```
@@ -132,53 +133,148 @@ tipdates
 ## [43] 2005
 ```
 
-Now we can root with ```rtt```.
+We can now root the tree and turn branch lengths into time using LSD.
 
 
 ```r
-myseqs.mltree.rooted <- rtt(myseqs.mltree,tipdates)
+write.tree(myseqs.mltree,"H5N1.tre")
+write.table(rbind(c(length(tipnames),""),cbind(tipnames,tipdates)),"H5N1.td",col.names=FALSE,row.names=FALSE,quote=FALSE)
 ```
 
-Now we can extract the location, and reconstruct the changes in state.
+
+```r
+lsd.cmd <- sprintf("lsd -i %s -d %s -c -n 1 -r -b %s -s %s -v","H5N1.tre","H5N1.td",paste(10),seq.len)
+lsd.cmd
+```
+
+```
+## [1] "lsd -i H5N1.tre -d H5N1.td -c -n 1 -r -b 10 -s 6987 -v"
+```
+
+```r
+lsd <- system(lsd.cmd,intern=TRUE)
+```
 
 
 ```r
-info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(myseqs.mltree.rooted$tip.label,collapse="\n"),quiet=TRUE)
+procresult <- function(fn){
+  result <- readLines(fn)
+  line <- result[grep("Tree 1 rate ",result)]
+  line.split <- strsplit(line, " ")[[1]]
+  list(rate=as.double(line.split[4]),tmrca=as.double(line.split[6]))
+}
+procresult("H5N1_result.txt")
+```
+
+```
+## $rate
+## [1] 0.003233
+## 
+## $tmrca
+## [1] 1994.113
+```
+
+
+```r
+lsd.tree <- read.tree("H5N1_result_newick_date.txt")
+```
+
+Now we can extract the location, and reconstruct the changes in state. Here is another R trick to parse sequence headers.
+
+
+```r
+info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(lsd.tree$tip.label,collapse="\n"),quiet=TRUE)
+info
+```
+
+```
+## [[1]]
+##  [1] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A"
+## [18] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A"
+## [35] "A" "A" "A" "A" "A" "A" "A" "A" "A"
+## 
+## [[2]]
+##  [1] "chicken"   "Goose"     "bird"      "bird"      "bird"     
+##  [6] "bird"      "bird"      "chicken"   "bird"      "bird"     
+## [11] "bird"      "duck"      "goose"     "goose"     "goose"    
+## [16] "duck"      "duck"      "chicken"   "swine"     "chicken"  
+## [21] "duck"      "goose"     "goose"     "duck"      "chicken"  
+## [26] "duck"      "Chicken"   "greyheron" "duck"      "duck"     
+## [31] "duck"      "duck"      "chicken"   "chicken"   "bird"     
+## [36] "duck"      "chicken"   "duck"      "duck"      "duck"     
+## [41] "duck"      "duck"      "Goose"    
+## 
+## [[3]]
+##  [1] "HongKong"  "HongKong"  "HongKong"  "HongKong"  "HongKong" 
+##  [6] "HongKong"  "HongKong"  "HongKong"  "HongKong"  "HongKong" 
+## [11] "HongKong"  "Guangxi"   "Guangxi"   "Guangxi"   "Guangxi"  
+## [16] "Guangxi"   "Guangxi"   "Guangxi"   "Fujian"    "Fujian"   
+## [21] "Fujian"    "Guangdong" "Guangxi"   "Hunan"     "Guangxi"  
+## [26] "Guangxi"   "Guangdong" "HongKong"  "Guangxi"   "Hunan"    
+## [31] "Hunan"     "Hunan"     "Guangdong" "Guangdong" "HongKong" 
+## [36] "Guangxi"   "HongKong"  "Guangdong" "Guangdong" "Guangxi"  
+## [41] "Fujian"    "Guangdong" "Guangdong"
+## 
+## [[4]]
+##  [1] "915"  "w355" "488"  "97"   "481"  "485"  "514"  "258"  "503"  "542" 
+## [11] "532"  "1378" "914"  "1097" "2112" "2291" "1681" "2439" "F1"   "1042"
+## [21] "897"  "2216" "345"  "1265" "2461" "793"  "810"  "837"  "351"  "139" 
+## [31] "182"  "157"  "191"  "174"  "213"  "50"   "863"  "4610" "01"   "22"  
+## [41] "13"   "12"   "1"   
+## 
+## [[5]]
+##  [1] 1997 1997 1997 1998 1997 1997 1997 1997 1997 1997 1997 2004 2004 2004
+## [15] 2004 2004 2004 2004 2001 2005 2005 2005 2005 2005 2004 2005 2005 2004
+## [29] 2004 2005 2005 2005 2004 2004 2003 2001 2002 2003 2001 2001 2002 2000
+## [43] 1996
+```
+
+The location is the third entry in the list.
+
+
+```r
 mylocation <- as.factor(info[[3]])
 mylocation
 ```
 
 ```
-##  [1] Fujian    Fujian    Fujian    Fujian    Guangdong Guangdong Guangdong
-##  [8] Guangdong Guangdong Guangdong Guangdong Guangdong Guangxi   Guangxi  
-## [15] Guangxi   Guangxi   Guangxi   Guangxi   Guangxi   Guangxi   Guangxi  
-## [22] Guangxi   Guangxi   Guangxi   Guangxi   HongKong  HongKong  HongKong 
-## [29] HongKong  HongKong  HongKong  HongKong  HongKong  HongKong  HongKong 
-## [36] HongKong  HongKong  HongKong  HongKong  Hunan     Hunan     Hunan    
-## [43] Hunan    
+##  [1] HongKong  HongKong  HongKong  HongKong  HongKong  HongKong  HongKong 
+##  [8] HongKong  HongKong  HongKong  HongKong  Guangxi   Guangxi   Guangxi  
+## [15] Guangxi   Guangxi   Guangxi   Guangxi   Fujian    Fujian    Fujian   
+## [22] Guangdong Guangxi   Hunan     Guangxi   Guangxi   Guangdong HongKong 
+## [29] Guangxi   Hunan     Hunan     Hunan     Guangdong Guangdong HongKong 
+## [36] Guangxi   HongKong  Guangdong Guangdong Guangxi   Fujian    Guangdong
+## [43] Guangdong
 ## Levels: Fujian Guangdong Guangxi HongKong Hunan
 ```
 
+We fix any small branch lengths.
 
 
 ```r
-myseqs.mltree.rooted$edge.length[myseqs.mltree.rooted$edge.length<0.00000001] <- 0.00000001
-myseqs.ace <- ace(mylocation,myseqs.mltree.rooted,type="discrete",method="ML",model="ER")
+lsd.tree$edge.length[lsd.tree$edge.length<0.00000001] <- 0.00000001
+```
+
+Now perform ancestral reconstruction of the location; I use a simple equal rates model (```model="ER"```), although in principle I could use more complex ones.
+
+
+```r
+lsd.tree.ace <- ace(mylocation,lsd.tree,type="discrete",method="ML",model="ER")
 ```
 
 
 ```r
-myseqs.ace
+lsd.tree.ace
 ```
 
 ```
 ## 
 ##     Ancestral Character Estimation
 ## 
-## Call: ace(x = mylocation, phy = myseqs.mltree.rooted, type = "discrete", 
-##     method = "ML", model = "ER")
+## Call: ace(x = mylocation, phy = lsd.tree, type = "discrete", method = "ML", 
+##     model = "ER")
 ## 
-##     Log-likelihood: -45.95053 
+##     Log-likelihood: -45.57865 
 ## 
 ## Rate index matrix:
 ##           Fujian Guangdong Guangxi HongKong Hunan
@@ -190,19 +286,24 @@ myseqs.ace
 ## 
 ## Parameter estimates:
 ##  rate index estimate std-err
-##           1  19.4038  4.0889
+##           1   0.0701  0.0151
 ## 
 ## Scaled likelihoods at the root (type '...$lik.anc' to get them for all nodes):
-##       Fujian    Guangdong      Guangxi     HongKong        Hunan 
-## 1.335464e-05 1.248930e-05 9.999497e-01 1.231242e-05 1.216222e-05
+##     Fujian  Guangdong    Guangxi   HongKong      Hunan 
+## 0.02836587 0.20304071 0.02992778 0.71128212 0.02738351
 ```
 
 
 ```r
-plot(myseqs.mltree.rooted, type="p",label.offset=0.0025,cex=0.75)
+plot(lsd.tree, type="p",label.offset=0.0025,cex=0.75)
 co <- c("blue", "yellow","red","green","orange")
 tiplabels(pch = 22, bg = co[as.numeric(mylocation)], cex = 1.0)
-nodelabels(thermo = myseqs.ace$lik.anc, piecol = co, cex = 0.25)
+nodelabels(thermo = lsd.tree.ace$lik.anc, piecol = co, cex = 0.25)
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 
+
+The next steps in this analysis could be:
+- To explore different possible models for the migration process
+- To perform a joint trait/tree analysis in BEAST (see [here](https://github.com/sdwfrost/influenza-dynamics-practical-h5n1) for an analysis of the same data)
+- To develop more complex structured coalescent models e.g. in ```rcolgem```

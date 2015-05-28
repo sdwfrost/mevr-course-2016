@@ -31,41 +31,81 @@ myseqs.gtrig <- optim.pml(myseqs.gtrig,optNni=TRUE,optBf=TRUE,optQ=TRUE,optInv=T
 myseqs.mltree <- myseqs.gtrig$tree
 ```
 
-We need to root the tree in order to do ancestral reconstruction. We use ```rtt```, but in principle, we could use any method we discussed before. We scan the names of the tip labels, to get the tip dates and location.
+We need to root the tree in order to do ancestral reconstruction. We could use ```rtt``` or ```lsd```, but in principle, we could use any method we discussed before. We scan the names of the tip labels, to get the tip dates and location.
 
 ```{r parse_tiplabels}
 info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(myseqs.mltree$tip.label,collapse="\n"),quiet=TRUE)
+tipnames <- myseqs.mltree$tip.label
 tipdates <- as.double(info[[5]])
 tipdates
 ```
 
-Now we can root with ```rtt```.
+We can now root the tree and turn branch lengths into time using LSD.
 
 ```{r}
-myseqs.mltree.rooted <- rtt(myseqs.mltree,tipdates)
+write.tree(myseqs.mltree,"H5N1.tre")
+write.table(rbind(c(length(tipnames),""),cbind(tipnames,tipdates)),"H5N1.td",col.names=FALSE,row.names=FALSE,quote=FALSE)
+
 ```
 
-Now we can extract the location, and reconstruct the changes in state.
+```{r}
+lsd.cmd <- sprintf("lsd -i %s -d %s -c -n 1 -r -b %s -s %s -v","H5N1.tre","H5N1.td",paste(10),seq.len)
+lsd.cmd
+lsd <- system(lsd.cmd,intern=TRUE)
+```
 
 ```{r}
-info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(myseqs.mltree.rooted$tip.label,collapse="\n"),quiet=TRUE)
+procresult <- function(fn){
+  result <- readLines(fn)
+  line <- result[grep("Tree 1 rate ",result)]
+  line.split <- strsplit(line, " ")[[1]]
+  list(rate=as.double(line.split[4]),tmrca=as.double(line.split[6]))
+}
+procresult("H5N1_result.txt")
+```
+
+```{r}
+lsd.tree <- read.tree("H5N1_result_newick_date.txt")
+```
+
+Now we can extract the location, and reconstruct the changes in state. Here is another R trick to parse sequence headers.
+
+```{r}
+info <- scan(what=list(character(),character(),character(),character(),integer()),sep="_",quote="\"",text=paste(lsd.tree$tip.label,collapse="\n"),quiet=TRUE)
+info
+```
+
+The location is the third entry in the list.
+
+```{r}
 mylocation <- as.factor(info[[3]])
 mylocation
 ```
 
+We fix any small branch lengths.
 
 ```{r }
-myseqs.mltree.rooted$edge.length[myseqs.mltree.rooted$edge.length<0.00000001] <- 0.00000001
-myseqs.ace <- ace(mylocation,myseqs.mltree.rooted,type="discrete",method="ML",model="ER")
+lsd.tree$edge.length[lsd.tree$edge.length<0.00000001] <- 0.00000001
+```
+
+Now perform ancestral reconstruction of the location; I use a simple equal rates model (```model="ER"```), although in principle I could use more complex ones.
+
+```{r}
+lsd.tree.ace <- ace(mylocation,lsd.tree,type="discrete",method="ML",model="ER")
 ```
 
 ```{r } 
-myseqs.ace
+lsd.tree.ace
 ```
 
 ```{r } 
-plot(myseqs.mltree.rooted, type="p",label.offset=0.0025,cex=0.75)
+plot(lsd.tree, type="p",label.offset=0.0025,cex=0.75)
 co <- c("blue", "yellow","red","green","orange")
 tiplabels(pch = 22, bg = co[as.numeric(mylocation)], cex = 1.0)
-nodelabels(thermo = myseqs.ace$lik.anc, piecol = co, cex = 0.25)
+nodelabels(thermo = lsd.tree.ace$lik.anc, piecol = co, cex = 0.25)
 ```
+
+The next steps in this analysis could be:
+- To explore different possible models for the migration process
+- To perform a joint trait/tree analysis in BEAST (see [here](https://github.com/sdwfrost/influenza-dynamics-practical-h5n1) for an analysis of the same data)
+- To develop more complex structured coalescent models e.g. in ```rcolgem```
