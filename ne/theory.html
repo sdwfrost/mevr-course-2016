@@ -44,7 +44,7 @@
     
 
         
-    <div class="book" data-level="10.1" data-basepath=".." data-revision="Thu May 28 2015 09:31:58 GMT+0100 (BST)">
+    <div class="book" data-level="10.1" data-basepath=".." data-revision="Thu May 28 2015 10:00:26 GMT+0100 (BST)">
     
 
 <div class="book-summary">
@@ -811,9 +811,32 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="10.2.1" data-path="ne/example.html">
+        <li class="chapter " data-level="10.2.1" data-path="ne/example1.html">
             
-            <span><b>10.2.1.</b> Fitting coalescent models</span>
+                
+                    <a href="../ne/example1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.2.1.</b>
+                        
+                        Fitting skyline
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="10.2.2" data-path="ne/exercise1.html">
+            
+                
+                    <a href="../ne/exercise1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.2.2.</b>
+                        
+                        Exercise
+                    </a>
+                
             
             
         </li>
@@ -1004,7 +1027,33 @@
                 
                     <section class="normal" id="section-">
                     
-                        
+                        <h1 id="effective-population-size">Effective population size</h1>
+<h2 id="introduction">Introduction</h2>
+<ul>
+<li>Given a clock-like tree, one of the quantities we can estimate is the <em>effective population size</em> over time assuming a coalescent model.</li>
+<li>This captures the rate at which the tree branches:<ul>
+<li>Small effective population size = high branching rate and short branches</li>
+<li>Large effective population size = low branching rate and long branches</li>
+</ul>
+</li>
+</ul>
+<h2 id="what-is-the-effective-population-size">What is the effective population size?</h2>
+<ul>
+<li>Not simply the number of infected individuals</li>
+<li>For simple models, $N_e=I \tau /2$<ul>
+<li>$I$ = number of infected individuals</li>
+<li>$\tau$ = average time between infections in the population (&apos;generation time&apos;)</li>
+</ul>
+</li>
+<li>As both $I$ <em>and</em> $\tau$ change over the course of an epidemic, it is often hard to interpret $N_e$ epidemiologically</li>
+<li>However, during the epidemic growth phase, the rate of change of $N_e$ reflects the exponential growth rate of infected individuals</li>
+</ul>
+<h2 id="coalescent-models-vs-birth-death-sampling-models">Coalescent models vs. birth-death-sampling models</h2>
+<ul>
+<li>Coalescent models assume the population size is changing deterministically</li>
+<li>Birth-death models allow for stochastic fluctuations in the population, but have not yet been extended to complex, nonlinear, structured populations</li>
+</ul>
+
                     
                     </section>
                 
