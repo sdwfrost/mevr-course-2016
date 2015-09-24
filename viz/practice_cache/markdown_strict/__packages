@@ -1,0 +1,9 @@
+base
+BiocInstaller
+magrittr
+roxygen2
+rmarkdown
+ape
+ggplot2
+ggtree
+phylobase

@@ -72,16 +72,16 @@ add.scale.bar()
 ## Generate ggtree and add annotations
 
 ```{r}
-g <- ggtree(tr,right=TRUE,time_scale=TRUE) %<+% dd
+g <- ggtree(tr,right=TRUE,mrsd="2014-04-21", as.Date=TRUE) %<+% dd
 ```
 
 ## Plot tree
 
 ```{r}
 g+
-  theme_tree2()+ # time scale
-  geom_point(subset=.(isTip),aes(shape=host,color=host),size=4)+ # tip symbols
-  geom_text(aes(color=host,label=host),hjust=-0.1)+ # tip labels
-  xlim(0,1.2)+ # x scale
-  xlab("Time") # x label
+    theme_tree2()+ # time scale
+        geom_tippoint(aes(shape=host, color=host), size=4) + # tip symbols
+            geom_text(aes(color=host,label=host),hjust=-0.1, na.rm=TRUE)+ # tip labels
+                xlim(as.Date("2013-04-01"), as.Date("2014-06-01"))+ # x scale
+                    xlab("Time") # x label
 ```
